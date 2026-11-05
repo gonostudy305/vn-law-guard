@@ -1,0 +1,25 @@
+<!--
+  Video YouTube "bấm để tải": trước khi người dùng bấm, chỉ hiện ảnh thumbnail (i.ytimg.com, không đặt cookie).
+  Khi bấm mới chèn iframe youtube-nocookie.com. Thay cho <iframe src="https://www.youtube.com/embed/..."> gắn thẳng,
+  vốn tải cookie YSC, VISITOR_INFO1_LIVE và gọi googleads.g.doubleclick.net ngay khi mở trang (01-C).
+  Thay VIDEO_ID và tiêu đề. Shopify: đặt trong section/snippet, không sửa file gen- tự sinh.
+-->
+<div class="yt-facade" data-id="VIDEO_ID" style="position:relative;aspect-ratio:16/9;cursor:pointer;background:#000">
+  <img src="https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg" alt="Tiêu đề video" loading="lazy"
+       style="width:100%;height:100%;object-fit:cover;display:block">
+  <button type="button" aria-label="Phát video: Tiêu đề video"
+          style="position:absolute;inset:0;margin:auto;width:68px;height:48px;border:0;border-radius:12px;background:#f00;color:#fff;font-size:22px">▶</button>
+</div>
+<script>
+  document.querySelectorAll('.yt-facade').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + el.dataset.id + '?autoplay=1';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture';
+      f.allowFullscreen = true;
+      f.title = el.querySelector('img').alt;
+      f.style.cssText = 'width:100%;height:100%;border:0';
+      el.replaceChildren(f);
+    }, {once: true});
+  });
+</script>

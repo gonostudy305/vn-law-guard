@@ -1,0 +1,49 @@
+{%- comment -%} Thay G-XXXXXXXXXX và GTM-XXXXXXX bằng mã thật (dạng G-XXXX, GTM-XXXX), xóa dòng GTM nếu không dùng. Render trong <head> của layout/theme.liquid, TRƯỚC content_for_header, và xóa mọi thẻ gtag/gtm gắn thẳng. {%- endcomment -%}
+{%- comment -%}
+  Consent gate for GA4/GTM (Luật BVDLCN 91/2025/QH15, NĐ 356/2025/NĐ-CP).
+  Google Consent Mode v2 starts as denied and the Google tags are only injected once the
+  Shopify cookie banner (Admin > Settings > Customer privacy) reports analytics or marketing
+  as allowed. In regions where the store does not require consent, the Customer Privacy API
+  reports everything allowed, so the tags load as before.
+{%- endcomment -%}
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+    analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted'
+  });
+  (function () {
+    var loaded = false;
+    function addScript(src) {
+      var s = document.createElement('script');
+      s.async = true; s.src = src;
+      document.head.appendChild(s);
+    }
+    function loadTags() {
+      if (loaded) return;
+      loaded = true;
+      addScript('https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX');
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+      dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+      addScript('https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX');
+    }
+    function apply(analytics, marketing) {
+      var a = analytics ? 'granted' : 'denied', m = marketing ? 'granted' : 'denied';
+      gtag('consent', 'update', {analytics_storage: a, ad_storage: m, ad_user_data: m, ad_personalization: m});
+      if (analytics || marketing) loadTags();
+    }
+    document.addEventListener('visitorConsentCollected', function (e) {
+      apply(e.detail.analyticsAllowed, e.detail.marketingAllowed);
+    });
+    function init() {
+      if (!window.Shopify || !Shopify.loadFeatures) return;
+      Shopify.loadFeatures([{name: 'consent-tracking-api', version: '0.2'}], function (err) {
+        if (err) return;
+        apply(Shopify.customerPrivacy.analyticsProcessingAllowed(), Shopify.customerPrivacy.marketingAllowed());
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  })();
+</script>

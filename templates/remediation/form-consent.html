@@ -1,0 +1,24 @@
+<!--
+  Thông báo mục đích + đồng ý cho form thu thập dữ liệu cá nhân (01-A, 01-B).
+  - Form chỉ dùng thông tin để trả lời yêu cầu (liên hệ, báo giá): đủ dùng câu thông báo (phương án 1).
+    Việc khách chủ động gửi yêu cầu kèm thông báo rõ mục đích là cách làm phổ biến; có cần ô tích riêng
+    hay không thì để người làm luật xác nhận.
+  - Dùng thêm cho mục đích khác (gửi khuyến mại, chia sẻ cho đối tác): bắt buộc ô đồng ý RIÊNG, không tích sẵn
+    (phương án 2). Không gộp vào điều khoản chung (điểm b khoản 4 Điều 9 Luật 91/2025).
+  - Lưu kèm bản ghi: thời điểm gửi + nội dung câu đồng ý (phiên bản), để chứng minh khi cần.
+-->
+
+<!-- Phương án 1: thông báo cạnh nút Gửi -->
+<p class="form-notice" style="font-size:13px">
+  Thông tin bạn gửi chỉ dùng để liên hệ tư vấn, báo giá theo yêu cầu này và được lưu trên hệ thống của chúng tôi
+  (nhà cung cấp: <em>[Shopify / Google…]</em>). Xem <a href="/chinh-sach-bao-mat" target="_blank" rel="noopener">Chính sách bảo mật</a>.
+</p>
+
+<!-- Phương án 2: thêm ô đồng ý cho mục đích phụ, KHÔNG có thuộc tính checked -->
+<label style="font-size:13px">
+  <input type="checkbox" name="contact[Đồng ý nhận tin khuyến mại]" value="Có - phiên bản 2026-11">
+  Tôi đồng ý nhận thông tin khuyến mại qua email/Zalo. Có thể hủy bất cứ lúc nào.
+</label>
+
+<!-- Shopify: trong {% form 'contact' %}, thêm trường ẩn ghi phiên bản thông báo -->
+<input type="hidden" name="contact[Phiên bản thông báo dữ liệu]" value="2026-11">

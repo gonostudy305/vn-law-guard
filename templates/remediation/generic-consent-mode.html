@@ -1,0 +1,97 @@
+<!--
+  Banner đồng ý cookie + Google Consent Mode v2 cho website không có CMP dựng sẵn
+  (HTML tĩnh, Haravan/Sapo theme, PHP...). Đặt ở đầu <head>, trước mọi thẻ Google/Meta.
+  - Mặc định từ chối; chỉ nạp GA4/GTM/Pixel sau khi người dùng bấm Chấp nhận (Luật 91/2025, Điều 9;
+    khoản 8 Điều 28 với quảng cáo theo hành vi).
+  - Nút Từ chối ngang hàng nút Chấp nhận. Im lặng/đóng banner = không đồng ý.
+  - Lưu lựa chọn kèm phiên bản nội dung banner (CONSENT_VERSION) để làm bằng chứng.
+  - Link "Cài đặt cookie" ở footer gọi window.vnConsent.open() để đổi/rút lựa chọn.
+  Thay G-XXXXXXXXXX, GTM-XXXXXXX, PIXEL_ID và đường dẫn chính sách. Xóa phần không dùng.
+-->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied',
+    analytics_storage:'denied', functionality_storage:'granted', security_storage:'granted'});
+  (function () {
+    var KEY = 'vn_consent', CONSENT_VERSION = '2026-11';
+    var loaded = {};
+    function addScript(src) { var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s); }
+    function loadAnalytics() {
+      if (loaded.a) return; loaded.a = true;
+      addScript('https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX');
+      gtag('js', new Date()); gtag('config', 'G-XXXXXXXXXX');
+    }
+    function loadMarketing() {
+      if (loaded.m) return; loaded.m = true;
+      dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+      addScript('https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX');
+      // Meta Pixel: dán đoạn khởi tạo fbq('init', 'PIXEL_ID') ở đây nếu dùng.
+    }
+    function apply(c) {
+      var a = c.analytics ? 'granted' : 'denied', m = c.marketing ? 'granted' : 'denied';
+      gtag('consent', 'update', {analytics_storage: a, ad_storage: m, ad_user_data: m, ad_personalization: m});
+      if (c.analytics) loadAnalytics();
+      if (c.marketing) loadMarketing();
+    }
+    function clearTrackingCookies() {
+      document.cookie.split(';').forEach(function (c) {
+        var n = c.split('=')[0].trim();
+        if (/^(_ga|_gid|_gcl_|_fbp|_fbc|_ttp)/.test(n)) {
+          var host = location.hostname.split('.');
+          for (var i = 0; i < host.length - 1; i++) {
+            document.cookie = n + '=; Max-Age=0; path=/; domain=.' + host.slice(i).join('.');
+          }
+          document.cookie = n + '=; Max-Age=0; path=/';
+        }
+      });
+    }
+    function read() { try { var c = JSON.parse(localStorage.getItem(KEY)); return c && c.v === CONSENT_VERSION ? c : null; } catch (e) { return null; } }
+    function save(c) {
+      c.v = CONSENT_VERSION; c.ts = new Date().toISOString();
+      try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) {}
+      if (!c.analytics || !c.marketing) clearTrackingCookies();
+      apply(c); hide();
+    }
+    var box;
+    function hide() { if (box) box.style.display = 'none'; }
+    function show() {
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'vn-consent';
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-label', 'Cài đặt cookie');
+        box.innerHTML =
+          '<p>Chúng tôi dùng cookie để thống kê lượt truy cập và đo hiệu quả quảng cáo. Cookie này chỉ bật khi bạn đồng ý. ' +
+          '<a href="/chinh-sach-bao-mat">Chính sách bảo mật</a></p>' +
+          '<label><input type="checkbox" id="vn-c-a"> Thống kê</label> ' +
+          '<label><input type="checkbox" id="vn-c-m"> Quảng cáo</label>' +
+          '<div class="vn-c-btns"><button id="vn-c-accept">Chấp nhận tất cả</button>' +
+          '<button id="vn-c-decline">Từ chối</button><button id="vn-c-save">Lưu lựa chọn</button></div>';
+        document.body.appendChild(box);
+        box.querySelector('#vn-c-accept').onclick = function () { save({analytics: true, marketing: true}); };
+        box.querySelector('#vn-c-decline').onclick = function () { save({analytics: false, marketing: false}); };
+        box.querySelector('#vn-c-save').onclick = function () {
+          save({analytics: box.querySelector('#vn-c-a').checked, marketing: box.querySelector('#vn-c-m').checked});
+        };
+      }
+      var c = read() || {};
+      box.querySelector('#vn-c-a').checked = !!c.analytics;   // không tích sẵn
+      box.querySelector('#vn-c-m').checked = !!c.marketing;
+      box.style.display = 'block';
+    }
+    window.vnConsent = {open: show};
+    var saved = read();
+    if (saved) apply(saved);
+    else document.addEventListener('DOMContentLoaded', show);
+  })();
+</script>
+<style>
+  #vn-consent { position: fixed; left: 16px; bottom: 16px; z-index: 2147483000; max-width: 420px; background: #fff; color: #222;
+    padding: 14px 16px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.25); font: 14px/1.45 system-ui, sans-serif; }
+  #vn-consent p { margin: 0 0 8px; }
+  #vn-consent .vn-c-btns { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  #vn-consent button { flex: 1 1 0; padding: 8px 10px; border: 1px solid #222; background: #fff; color: #222; border-radius: 4px; cursor: pointer; }
+  @media (max-width: 480px) { #vn-consent { left: 0; right: 0; bottom: 0; max-width: none; border-radius: 10px 10px 0 0; } }
+</style>
+<!-- Footer: <a href="#" onclick="window.vnConsent.open(); return false;">Cài đặt cookie</a> -->

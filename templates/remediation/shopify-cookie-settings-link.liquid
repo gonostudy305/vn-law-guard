@@ -1,0 +1,21 @@
+{%- comment -%}
+  "Cookie settings" link under the footer: reopens the Shopify cookie banner preferences so a
+  visitor can change or withdraw consent. Falls back to the privacy policy page when the banner
+  is not enabled for the visitor's region.
+{%- endcomment -%}
+{%- if request.locale.iso_code == 'en' -%}
+  {%- assign cookie_label = 'Cookie settings' -%}
+{%- else -%}
+  {%- assign cookie_label = 'Cài đặt cookie' -%}
+{%- endif -%}
+<div class="cookie-settings-link" style="text-align: center; padding: 8px 15px 12px; font-size: 13px;">
+  <a href="{{ routes.root_url }}{% unless routes.root_url == '/' %}/{% endunless %}pages/chinh-sach-bao-mat{%- comment -%} đổi handle trang chính sách nếu khác {%- endcomment -%}" id="hp-cookie-settings" rel="nofollow">{{ cookie_label }}</a>
+</div>
+<script>
+  document.getElementById('hp-cookie-settings').addEventListener('click', function (e) {
+    if (window.privacyBanner && window.privacyBanner.showPreferences) {
+      e.preventDefault();
+      window.privacyBanner.showPreferences();
+    }
+  });
+</script>
