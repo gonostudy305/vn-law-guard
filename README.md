@@ -5,7 +5,7 @@
 
 **Tiếng Việt** · [English](README.en.md)
 
-🌐 [Trang giới thiệu kỹ thuật](https://vn-consent-evidence-guard.lovable.app/?ref=github) · [Dịch vụ rà soát cho doanh nghiệp (không cần biết kỹ thuật)](https://du-lieu-sach-viet.lovable.app/?ref=github)
+🌐 [Trang giới thiệu kỹ thuật](https://guard.gonovn.me/?ref=github) · [Dịch vụ rà soát cho doanh nghiệp (không cần biết kỹ thuật)](https://khamweb.gonovn.me/?ref=github)
 
 Bộ công cụ rà soát kỹ thuật website theo pháp luật Việt Nam: **đo bằng chứng cookie và tracking trên trình duyệt thật**, đối chiếu với checklist pháp lý, và **mẫu sửa lỗi** cho từng nền tảng. Dùng được như một AI skill (Claude Code, Antigravity…) hoặc chạy độc lập bằng Python.
 

@@ -5,7 +5,7 @@
 
 [Tiếng Việt](README.md) · **English**
 
-🌐 [Technical overview](https://vn-consent-evidence-guard.lovable.app/?ref=github) · [Done-for-you review service for businesses (Vietnamese)](https://du-lieu-sach-viet.lovable.app/?ref=github)
+🌐 [Technical overview](https://guard.gonovn.me/?ref=github) · [Done-for-you review service for businesses (Vietnamese)](https://khamweb.gonovn.me/?ref=github)
 
 A technical review kit for websites operating in Vietnam: it **measures cookie and tracking behaviour in a real browser**, maps the findings to Vietnamese legal checklists, and ships **fix templates** per platform. Use it as an AI coding-agent skill (Claude Code, Antigravity…) or as a standalone Python tool.
 
