@@ -2,6 +2,11 @@
 
 Định dạng theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/), phiên bản theo [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Trang giới thiệu tĩnh `site/`, xuất bản tại https://gonovn.me/vn-law-guard/ qua GitHub Pages (workflow `pages.yml`). Không cookie, không analytics, font tự host.
+
 ## [0.2.0] - 2026-11-09
 
 ### Added

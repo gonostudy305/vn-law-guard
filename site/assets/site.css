@@ -1,0 +1,22 @@
+/* Additions on top of the compiled Tailwind build (styles.css). */
+.self-start { align-self: flex-start; }
+
+.topbar {
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklab, var(--signal) 10%, var(--background));
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 16px;
+  text-align: center;
+}
+.topbar a {
+  color: var(--signal);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+pre code { white-space: pre; }
+[hidden] { display: none !important; }

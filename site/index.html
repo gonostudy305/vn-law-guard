@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VN Law Guard — Đo lường Cookie &amp; Tracker bằng trình duyệt thật</title>
+<meta name="description" content="Công cụ mã nguồn mở đo cookie, tracker và network request trên website Việt Nam bằng trình duyệt thật, trước và sau khi khách chọn đồng ý.">
+<link rel="canonical" href="https://gonovn.me/vn-law-guard/">
+<meta property="og:title" content="VN Law Guard — Bằng chứng kỹ thuật trên trình duyệt thật">
+<meta property="og:description" content="Công cụ mã nguồn mở đo cookie và tracker trên website Việt Nam bằng trình duyệt thật.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gonovn.me/vn-law-guard/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{var t=localStorage.getItem('vn-law-guard-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body>
+<div class="min-h-screen bg-background text-foreground transition-colors duration-300">
+  <div class="topbar">Chủ doanh nghiệp, không rành kỹ thuật? <a href="https://khamweb.gonovn.me/?ref=oss">Xem dịch vụ rà soát cho doanh nghiệp →</a></div>
+  <header class="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-xl">
+    <div class="mx-auto flex h-[68px] max-w-[1440px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-10">
+      <a href="#top" class="flex shrink-0 items-center gap-2.5" aria-label="VN Law Guard — đầu trang">
+        <span class="grid size-8 place-items-center rounded-[7px] border border-signal/30 bg-signal/10 text-signal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+        </span>
+        <span class="whitespace-nowrap text-[15px] font-semibold tracking-normal">
+          VN Law Guard
+        </span>
+        <span class="hidden rounded-full border border-signal/25 bg-signal/10 px-2 py-0.5 font-mono text-[10px] font-medium text-signal sm:inline-flex">
+          v0.2.0
+        </span>
+      </a>
+      <nav class="hidden items-center gap-6 xl:flex" aria-label="Điều hướng chính">
+        <a class="nav-link" href="#how-it-works">
+          Nguyên lý quét động
+        </a>
+        <a class="nav-link" href="#case-study">
+          Case study thực tế
+        </a>
+        <a class="nav-link" href="#platforms">
+          Nền tảng hỗ trợ
+        </a>
+        <a class="nav-link" href="#pilot">
+          Cách bắt đầu
+        </a>
+      </nav>
+      <div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <a href="https://github.com/gonostudy305/vn-law-guard" target="_blank" rel="noopener" class="hidden items-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:inline-flex">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github" aria-hidden="true">
+            <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+            <path d="M9 18c-4.51 2-5-2-7-2" />
+          </svg>
+          <span>
+            GitHub
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true">
+            <path d="M7 7h10v10" />
+            <path d="M7 17 17 7" />
+          </svg>
+        </a>
+        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground size-9" id="theme-toggle" type="button" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+        </button>
+        <a href="https://khamweb.gonovn.me/?ref=oss#dang-ky" class="items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 py-2 hidden h-9 px-3 text-xs sm:inline-flex">
+          Nhờ rà soát giúp
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </a>
+        <a href="https://khamweb.gonovn.me/?ref=oss#dang-ky" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 size-9 sm:hidden" aria-label="Nhờ rà soát giúp">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </a>
+        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground size-9 xl:hidden" id="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Mở menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu" aria-hidden="true">
+            <path d="M4 5h16" />
+            <path d="M4 12h16" />
+            <path d="M4 19h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <nav id="mobile-nav" class="border-t border-border bg-background px-5 py-3 xl:hidden" aria-label="Menu di động" hidden>
+      <div class="mx-auto grid max-w-[1440px] gap-1">
+        <a class="nav-link rounded-md px-3 py-2.5" href="#how-it-works">Nguyên lý quét động</a>
+        <a class="nav-link rounded-md px-3 py-2.5" href="#case-study">Case study thực tế</a>
+        <a class="nav-link rounded-md px-3 py-2.5" href="#platforms">Nền tảng hỗ trợ</a>
+        <a class="nav-link rounded-md px-3 py-2.5" href="#pilot">Cách bắt đầu</a>
+      </div>
+    </nav>
+  </header>
+  <main id="top">
+    <section class="hero-grid border-b border-border/70">
+      <div class="mx-auto grid max-w-[1440px] items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.04fr_0.96fr] lg:gap-10 lg:px-10 lg:py-[92px]">
+        <div class="max-w-[650px]">
+          <div class="mb-7 inline-flex items-center gap-2 rounded-full border border-signal/20 bg-signal/5 px-3 py-1.5 text-xs font-medium text-signal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true">
+              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+            <span>
+              Mã nguồn mở
+            </span>
+            <span class="size-1 rounded-full bg-signal/70">
+            </span>
+            <span>
+              Kế thừa lõi vn-law-check
+            </span>
+            <span class="size-1 rounded-full bg-signal/70">
+            </span>
+            <span>
+              Playwright
+            </span>
+          </div>
+          <h1 class="max-w-[680px] text-[37px] leading-[1.14] font-semibold tracking-normal sm:text-[46px] lg:text-[52px]">
+            Đo lường bằng chứng Cookie &amp; Tracker trên trình duyệt thật.
+            <span class="mt-3 block text-muted-foreground">
+              Rà soát kỹ thuật trước khi đi vào hoạt động.
+            </span>
+          </h1>
+          <p class="mt-6 max-w-[590px] text-[15px] leading-7 text-muted-foreground sm:text-base">
+            Quét tĩnh mã nguồn và quét động bằng trình duyệt thật (3 phiên desktop, thêm 1 phiên mobile) bổ sung cho nhau. Phát hiện network beacon và cookie bên thứ ba trước/sau khi khách nhấn Đồng ý. Không suy đoán — chỉ ghi nhận bằng chứng kỹ thuật.
+          </p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a href="#pilot" class="inline-flex items-center gap-2 whitespace-nowrap rounded-md font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 py-2 h-11 justify-center px-5 text-sm">
+              Bắt đầu sử dụng
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+            <a href="https://github.com/gonostudy305/vn-law-guard" target="_blank" rel="noopener" class="inline-flex items-center gap-2 whitespace-nowrap rounded-md font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground py-2 h-11 justify-center px-5 text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github" aria-hidden="true">
+                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                <path d="M9 18c-4.51 2-5-2-7-2" />
+              </svg>
+              Xem mã nguồn trên GitHub
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true">
+                <path d="M7 7h10v10" />
+                <path d="M7 17 17 7" />
+              </svg>
+            </a>
+          </div>
+          <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+            <span class="inline-flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check text-signal" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+              Không kết luận pháp lý
+            </span>
+            <span class="inline-flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-xml text-cyan" aria-hidden="true">
+                <path d="m18 16 4-4-4-4" />
+                <path d="m6 8-4 4 4 4" />
+                <path d="m14.5 4-5 16" />
+              </svg>
+              Bằng chứng có thể đối soát
+            </span>
+          </div>
+        </div>
+        <div class="console-window min-w-0 overflow-hidden rounded-[8px] border border-border/90 bg-console shadow-2xl shadow-foreground/10">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-console-border px-4 py-3 sm:px-5">
+            <div class="flex items-center gap-2.5">
+              <span class="size-2 rounded-full bg-danger">
+              </span>
+              <span class="size-2 rounded-full bg-warning">
+              </span>
+              <span class="size-2 rounded-full bg-signal">
+              </span>
+              <span class="ml-2 font-mono text-[11px] text-console-muted">
+                vn-law-guard / scan
+              </span>
+            </div>
+            <span class="rounded-sm border border-signal/25 bg-signal/10 px-2 py-1 font-mono text-[9px] tracking-wider text-signal">
+              BẢN DEMO
+            </span>
+          </div>
+          <div class="flex items-center justify-between gap-3 border-b border-console-border px-4 py-2.5 sm:px-5">
+            <div dir="ltr" data-orientation="horizontal">
+              <div role="tablist" aria-orientation="horizontal" class="inline-flex items-center justify-center text-muted-foreground h-8 rounded bg-console-panel p-0.5" data-orientation="horizontal">
+                <button type="button" role="tab" aria-selected="true" data-viewport="desktop" data-state="active" id="tab-vp-desktop" class="inline-flex items-center justify-center whitespace-nowrap py-1 font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed h-7 gap-1.5 rounded-sm px-2.5 text-[10px] data-[state=active]:bg-console-active data-[state=active]:text-console-foreground data-[state=active]:shadow-none" data-orientation="horizontal">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-laptop" aria-hidden="true">
+                    <path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z" />
+                    <path d="M20.054 15.987H3.946" />
+                  </svg>
+                  Desktop
+                </button>
+                <button type="button" role="tab" aria-selected="false" data-viewport="mobile" data-state="inactive" id="tab-vp-mobile" class="inline-flex items-center justify-center whitespace-nowrap py-1 font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed h-7 gap-1.5 rounded-sm px-2.5 text-[10px] data-[state=active]:bg-console-active data-[state=active]:text-console-foreground data-[state=active]:shadow-none" data-orientation="horizontal">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smartphone" aria-hidden="true">
+                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                    <path d="M12 18h.01" />
+                  </svg>
+                  Mobile
+                </button>
+              </div>
+            </div>
+            <span id="vp-size" class="font-mono text-[10px] text-console-muted">
+              1366 × 768
+            </span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 border-b border-console-border px-4 py-3 sm:px-5">
+            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-7 rounded-sm border px-2.5 font-mono text-[10px] border-cyan/35 bg-cyan/10 text-cyan hover:bg-cyan/15 hover:text-cyan" type="button" data-phase="first-visit" aria-pressed="true">
+              Chưa chọn
+            </button>
+            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-7 rounded-sm border px-2.5 font-mono text-[10px] border-transparent text-console-muted hover:bg-console-active hover:text-console-foreground" type="button" data-phase="decline" aria-pressed="false">
+              Từ chối
+            </button>
+            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-7 rounded-sm border px-2.5 font-mono text-[10px] border-transparent text-console-muted hover:bg-console-active hover:text-console-foreground" type="button" data-phase="accept" aria-pressed="false">
+              Đồng ý
+            </button>
+          </div>
+          <div class="flex items-center justify-between gap-3 border-b border-console-border px-4 py-3 sm:px-5">
+            <div class="flex min-w-0 items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-terminal shrink-0 text-cyan" aria-hidden="true">
+                <path d="m7 11 2-2-2-2" />
+                <path d="M11 13h4" />
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+              </svg>
+              <span id="phase-title" class="truncate text-xs font-medium text-console-foreground">
+                Lần truy cập đầu tiên
+              </span>
+            </div>
+            <span id="phase-status" class="shrink-0 font-mono text-[9px] text-signal">
+              ĐANG KIỂM TRA NETWORK
+            </span>
+          </div>
+          <div class="min-h-[217px] px-4 py-5 font-mono text-[11px] leading-6 sm:min-h-[224px] sm:px-5 sm:text-xs">
+            <p class="mb-4 text-console-muted">
+              <span class="text-signal">
+                $
+              </span>
+              python scripts/dynamic_scan.py https://example.vn
+            </p>
+            <div id="phase-lines" class="space-y-2">
+              <div class="flex items-start gap-2.5 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
+                <span class="shrink-0 text-console-muted">
+                  [00:00.00]
+                </span>
+                <span class="min-w-0 break-words text-console-foreground">
+                  Mở trang chủ · phiên mới
+                </span>
+              </div>
+              <div class="flex items-start gap-2.5 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
+                <span class="shrink-0 text-console-muted">
+                  [00:00.41]
+                </span>
+                <span class="min-w-0 break-words text-cyan">
+                  Đang theo dõi request bên thứ ba…
+                </span>
+              </div>
+              <div class="flex items-start gap-2.5 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
+                <span class="shrink-0 text-console-muted">
+                  [00:01.08]
+                </span>
+                <span class="min-w-0 break-words text-signal">
+                  Cookie trước consent: 0
+                </span>
+              </div>
+              <div class="flex items-start gap-2.5 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
+                <span class="shrink-0 text-console-muted">
+                  [00:01.12]
+                </span>
+                <span class="min-w-0 break-words text-console-muted">
+                  Đang chờ lựa chọn của người dùng
+                </span>
+                <span class="mt-1 size-1.5 shrink-0 animate-pulse rounded-full bg-signal">
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 border-t border-console-border bg-console-panel/60 px-4 py-2.5 font-mono text-[9px] text-console-muted sm:px-5">
+            <span class="inline-flex items-center gap-1.5">
+              <span id="vp-dot" class="size-1.5 rounded-full bg-signal">
+              </span>
+              <span id="vp-foot">DESKTOP 1366PX</span>
+            </span>
+            <span>
+              <span id="vp-phases">Chromium · 3 phases</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="border-b border-border/70" aria-label="Phạm vi kiểm tra">
+      <div class="mx-auto grid max-w-[1440px] grid-cols-2 divide-x divide-border/80 px-5 sm:grid-cols-4 sm:px-8 lg:px-10">
+        <div class="flex min-h-[76px] items-center gap-3 px-3 py-3 sm:min-h-[88px] sm:gap-3.5 sm:px-5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-network shrink-0 text-cyan" aria-hidden="true">
+            <rect x="16" y="16" width="6" height="6" rx="1" />
+            <rect x="2" y="16" width="6" height="6" rx="1" />
+            <rect x="9" y="2" width="6" height="6" rx="1" />
+            <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />
+            <path d="M12 12V8" />
+          </svg>
+          <div class="min-w-0">
+            <p class="truncate text-[10px] text-muted-foreground sm:text-xs">
+              Network request
+            </p>
+            <p class="mt-1 text-[11px] font-medium sm:text-sm">
+              Theo dõi thực tế
+            </p>
+          </div>
+        </div>
+        <div class="flex min-h-[76px] items-center gap-3 px-3 py-3 sm:min-h-[88px] sm:gap-3.5 sm:px-5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cookie shrink-0 text-cyan" aria-hidden="true">
+            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+            <path d="M8.5 8.5v.01" />
+            <path d="M16 15.5v.01" />
+            <path d="M12 12v.01" />
+            <path d="M11 17v.01" />
+            <path d="M7 14v.01" />
+          </svg>
+          <div class="min-w-0">
+            <p class="truncate text-[10px] text-muted-foreground sm:text-xs">
+              Cookie
+            </p>
+            <p class="mt-1 text-[11px] font-medium sm:text-sm">
+              Trước / sau consent
+            </p>
+          </div>
+        </div>
+        <div class="flex min-h-[76px] items-center gap-3 px-3 py-3 sm:min-h-[88px] sm:gap-3.5 sm:px-5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-laptop shrink-0 text-cyan" aria-hidden="true">
+            <path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z" />
+            <path d="M20.054 15.987H3.946" />
+          </svg>
+          <div class="min-w-0">
+            <p class="truncate text-[10px] text-muted-foreground sm:text-xs">
+              Desktop
+            </p>
+            <p class="mt-1 text-[11px] font-medium sm:text-sm">
+              1366px
+            </p>
+          </div>
+        </div>
+        <div class="flex min-h-[76px] items-center gap-3 px-3 py-3 sm:min-h-[88px] sm:gap-3.5 sm:px-5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smartphone shrink-0 text-cyan" aria-hidden="true">
+            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+            <path d="M12 18h.01" />
+          </svg>
+          <div class="min-w-0">
+            <p class="truncate text-[10px] text-muted-foreground sm:text-xs">
+              Mobile
+            </p>
+            <p class="mt-1 text-[11px] font-medium sm:text-sm">
+              390px
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="how-it-works" class="scroll-mt-20 section-space">
+      <div class="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-10">
+        <div class="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div class="max-w-[720px]">
+            <p class="section-eyebrow">
+              <span class="size-1.5 rounded-full bg-signal">
+              </span>
+              Cách đo lường
+            </p>
+            <h2 class="mt-3 text-3xl leading-tight font-semibold sm:text-[38px]">
+              Tại sao quét tĩnh là chưa đủ?
+            </h2>
+            <p class="mt-3 max-w-[660px] text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+              Đọc mã nguồn giúp tìm dấu hiệu. Trình duyệt thật cho biết chính xác website làm gì khi tải và khi người dùng chọn.
+            </p>
+          </div>
+        </div>
+        <div class="mt-10 grid gap-4 lg:grid-cols-2">
+          <article class="flex h-full flex-col border-t-2 border-warning bg-card px-5 py-5 sm:px-7 sm:py-6">
+            <div class="flex items-center justify-between gap-3">
+              <span class="font-mono text-[10px] tracking-wider text-warning">
+                01 / PHÂN TÍCH MÃ NGUỒN
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-code-corner text-warning" aria-hidden="true">
+                <path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35" />
+                <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                <path d="m5 16-3 3 3 3" />
+                <path d="m9 22 3-3-3-3" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-xl font-semibold">
+              Quét tĩnh · Static grep
+            </h3>
+            <ul class="mt-5 flex-1 space-y-3.5">
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground">
+                <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-muted-foreground/50">
+                </span>
+                <span>
+                  Đọc chuỗi HTML và JavaScript trên mã nguồn.
+                </span>
+              </li>
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground">
+                <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-muted-foreground/50">
+                </span>
+                <span>
+                  Hữu ích để tìm dấu hiệu script và cấu hình được khai báo sẵn.
+                </span>
+              </li>
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground">
+                <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-warning">
+                </span>
+                <span>
+                  Không quan sát được tracker nạp muộn qua GTM, App Embeds hoặc React SPA.
+                </span>
+              </li>
+            </ul>
+            <div class="mt-6 border-t border-border pt-4 font-mono text-[10px] text-muted-foreground">
+              Phân tích tệp · Không mô phỏng hành vi
+            </div>
+          </article>
+          <article class="flex h-full flex-col border-t-2 border-signal bg-card px-5 py-5 sm:px-7 sm:py-6">
+            <div class="flex items-center justify-between gap-3">
+              <span class="font-mono text-[10px] tracking-wider text-signal">
+                02 / CHẠY TRÌNH DUYỆT
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scan-search text-signal" aria-hidden="true">
+                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                <circle cx="12" cy="12" r="3" />
+                <path d="m16 16-1.9-1.9" />
+              </svg>
+            </div>
+            <h3 class="mt-5 text-xl font-semibold">
+              Quét động · VN Law Guard
+            </h3>
+            <ul class="mt-5 flex-1 space-y-3.5">
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-1 shrink-0 text-signal" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                <span>
+                  Khởi chạy Chromium và mô phỏng lựa chọn của khách.
+                </span>
+              </li>
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-1 shrink-0 text-signal" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                <span>
+                  Ghi nhận request /collect, fbevents.js và cookie _ga, _fbp.
+                </span>
+              </li>
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-1 shrink-0 text-signal" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                <span>
+                  Phân biệt ping Consent Mode gcs=G100 với cookie được tạo.
+                </span>
+              </li>
+            </ul>
+            <div class="mt-6 border-t border-border pt-4 font-mono text-[10px] text-muted-foreground">
+              Network · Cookie · 3 phiên desktop + 1 phiên mobile
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="case-study" class="scroll-mt-20 border-y border-border/70 bg-secondary/25 py-16 sm:py-20">
+      <div class="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-10">
+        <div class="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div class="max-w-[720px]">
+            <p class="section-eyebrow">
+              <span class="size-1.5 rounded-full bg-signal">
+              </span>
+              Case study ẩn danh · Một website B2B
+            </p>
+            <h2 class="mt-3 text-3xl leading-tight font-semibold sm:text-[38px]">
+              Một iframe YouTube. Cookie theo dõi trước khi khách đồng ý.
+            </h2>
+            <p class="mt-3 max-w-[660px] text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+              Video YouTube nhúng trên trang giới thiệu vẫn tải tài nguyên bên thứ ba và đặt cookie dù khách đã từ chối banner. So sánh trước và sau khi chuyển sang YouTube Facade.
+            </p>
+          </div>
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-warning/25 bg-warning/10 px-2.5 py-1.5 font-mono text-[10px] text-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" x2="12" y1="8" y2="12" />
+              <line x1="12" x2="12.01" y1="16" y2="16" />
+            </svg>
+            CASE STUDY ẨN DANH
+          </span>
+        </div>
+        <div dir="ltr" data-orientation="horizontal" class="mt-9">
+          <div role="tablist" aria-orientation="horizontal" class="inline-flex items-center justify-center text-muted-foreground h-10 rounded-md border border-border bg-background p-1" data-orientation="horizontal">
+            <button type="button" role="tab" aria-selected="true" data-case="before" aria-controls="case-before" data-state="active" id="tab-case-before" class="inline-flex items-center justify-center whitespace-nowrap py-1 font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed data-[state=active]:shadow gap-2 rounded px-3 text-xs data-[state=active]:bg-destructive/10 data-[state=active]:text-destructive" data-orientation="horizontal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" x2="12" y1="8" y2="12" />
+                <line x1="12" x2="12.01" y1="16" y2="16" />
+              </svg>
+              Trước khi sửa
+            </button>
+            <button type="button" role="tab" aria-selected="false" data-case="after" aria-controls="case-after" data-state="inactive" id="tab-case-after" class="inline-flex items-center justify-center whitespace-nowrap py-1 font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed data-[state=active]:shadow gap-2 rounded px-3 text-xs data-[state=active]:bg-signal/10 data-[state=active]:text-signal" data-orientation="horizontal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+              Sau khi sửa
+            </button>
+          </div>
+          <div data-state="active" data-orientation="horizontal" role="tabpanel" aria-labelledby="tab-case-before" id="case-before" tabindex="0" class="ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-4 animate-in fade-in-0 duration-200" style="animation-duration:0s">
+            <div class="grid overflow-hidden rounded-[7px] border border-border bg-card lg:grid-cols-[0.8fr_1.2fr]">
+              <div class="border-b border-border p-5 sm:p-7 lg:border-r lg:border-b-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" x2="12" y1="8" y2="12" />
+                      <line x1="12" x2="12.01" y1="16" y2="16" />
+                    </svg>
+                    TỪ CHỐI CONSENT · TRƯỚC KHI SỬA
+                  </span>
+                  <span class="font-mono text-[9px] text-muted-foreground">
+                    MẪU LOG
+                  </span>
+                </div>
+                <p class="mt-5 text-lg leading-snug font-semibold">
+                  Iframe tải dù khách đã từ chối.
+                </p>
+                <p class="mt-2 text-sm leading-6 text-muted-foreground">
+                  YouTube iframe thông thường phát sinh request đến miền Google và cookie theo dõi trước khi khách xem video.
+                </p>
+                <div class="mt-6 flex flex-wrap gap-2">
+                  <span class="rounded-sm border px-2 py-1 font-mono text-[10px] border-danger/25 bg-danger/10 text-danger">
+                    Request tới YouTube, Google
+                  </span>
+                  <span class="rounded-sm border px-2 py-1 font-mono text-[10px] border-warning/25 bg-warning/10 text-warning">
+                    2 cookie theo dõi
+                  </span>
+                </div>
+              </div>
+              <div class="min-w-0 bg-console p-4 text-console-foreground sm:p-6">
+                <div class="flex items-center justify-between gap-2 border-b border-console-border pb-3">
+                  <span class="inline-flex items-center gap-2 font-mono text-[10px] text-console-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-network text-cyan" aria-hidden="true">
+                      <rect x="16" y="16" width="6" height="6" rx="1" />
+                      <rect x="2" y="16" width="6" height="6" rx="1" />
+                      <rect x="9" y="2" width="6" height="6" rx="1" />
+                      <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />
+                      <path d="M12 12V8" />
+                    </svg>
+                    NETWORK INSPECTOR
+                  </span>
+                  <span class="font-mono text-[9px] text-console-muted">
+                    AFTER: DECLINE
+                  </span>
+                </div>
+                <div class="mt-3 space-y-0.5 font-mono text-[10px] sm:text-[11px]">
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-cyan">
+                      GET
+                    </span>
+                    <span class="break-all text-console-foreground">
+                      www.youtube.com/youtubei/v1/player
+                    </span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">
+                      200 · third-party
+                    </span>
+                  </div>
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-warning">
+                      SET
+                    </span>
+                    <span class="break-all text-console-foreground">
+                      VISITOR_INFO1_LIVE
+                    </span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">
+                      youtube.com · tracker
+                    </span>
+                  </div>
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-warning">
+                      SET
+                    </span>
+                    <span class="break-all text-console-foreground">
+                      YSC
+                    </span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">
+                      youtube.com · tracker
+                    </span>
+                  </div>
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-cyan">
+                      GET
+                    </span>
+                    <span class="break-all text-console-foreground">
+                      google.com/s/…
+                    </span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">
+                      200 · third-party
+                    </span>
+                  </div>
+                </div>
+                <div class="mt-4 flex items-center justify-between border-t border-console-border pt-3 font-mono text-[10px] text-danger">
+                  <span>
+                    RÒ RỈ TRƯỚC CONSENT
+                  </span>
+                  <span>
+                    KHI TẢI TRANG
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-state="inactive" data-orientation="horizontal" role="tabpanel" aria-labelledby="tab-case-after" hidden="" id="case-after" tabindex="0" class="ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-4 animate-in fade-in-0 duration-200">
+            <div class="grid overflow-hidden rounded-[7px] border border-border bg-card lg:grid-cols-[0.8fr_1.2fr]">
+              <div class="border-b border-border p-5 sm:p-7 lg:border-r lg:border-b-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-signal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+                    TỪ CHỐI CONSENT · SAU KHI SỬA
+                  </span>
+                  <span class="font-mono text-[9px] text-muted-foreground">MẪU LOG</span>
+                </div>
+                <p class="mt-5 text-lg leading-snug font-semibold">Chỉ nạp video khi khách chủ động.</p>
+                <p class="mt-2 text-sm leading-6 text-muted-foreground">Trang tải ảnh poster cùng miền. Sau khi khách bấm “Xem video”, facade mới nạp iframe qua youtube-nocookie.com.</p>
+                <div class="mt-6 flex flex-wrap gap-2">
+                  <span class="rounded-sm border px-2 py-1 font-mono text-[10px] border-signal/25 bg-signal/10 text-signal">0 request bên thứ ba khi tải</span>
+                  <span class="rounded-sm border px-2 py-1 font-mono text-[10px] border-signal/25 bg-signal/10 text-signal">0 cookie theo dõi</span>
+                </div>
+                <p class="mt-5 text-xs text-muted-foreground">Mẫu: <a class="inline-link" href="https://github.com/gonostudy305/vn-law-guard/blob/main/templates/remediation/youtube-facade.html" target="_blank" rel="noopener">templates/remediation/youtube-facade.html</a></p>
+              </div>
+              <div class="min-w-0 bg-console p-4 text-console-foreground sm:p-6">
+                <div class="flex items-center justify-between gap-2 border-b border-console-border pb-3">
+                  <span class="inline-flex items-center gap-2 font-mono text-[10px] text-console-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-network text-cyan" aria-hidden="true"><rect x="16" y="16" width="6" height="6" rx="1" /><rect x="2" y="16" width="6" height="6" rx="1" /><rect x="9" y="2" width="6" height="6" rx="1" /><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" /><path d="M12 12V8" /></svg>
+                    NETWORK INSPECTOR
+                  </span>
+                  <span class="font-mono text-[9px] text-console-muted">AFTER: DECLINE</span>
+                </div>
+                <div class="mt-3 space-y-0.5 font-mono text-[10px] sm:text-[11px]">
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-cyan">GET</span>
+                    <span class="break-all text-console-foreground">/assets/video-poster.webp</span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">200 · same-origin</span>
+                  </div>
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-cyan">SET</span>
+                    <span class="break-all text-console-foreground">Cookie trước khi bấm</span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">không có</span>
+                  </div>
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-cyan">GET</span>
+                    <span class="break-all text-console-foreground">youtube-nocookie.com/embed</span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">chỉ sau khi bấm</span>
+                  </div>
+                  <div class="grid grid-cols-[30px_minmax(0,1fr)] gap-x-2 border-b border-console-border/70 py-2 sm:grid-cols-[34px_minmax(0,1fr)_auto] sm:items-center">
+                    <span class="text-cyan">CHK</span>
+                    <span class="break-all text-console-foreground">Request bên thứ ba khi tải</span>
+                    <span class="col-start-2 mt-0.5 text-console-muted sm:col-start-auto sm:mt-0 sm:pl-3">0</span>
+                  </div>
+                </div>
+                <div class="mt-4 flex items-center justify-between border-t border-console-border pt-3 font-mono text-[10px] text-signal">
+                  <span>KHÔNG CÓ REQUEST RÒ RỈ</span>
+                  <span>KHI TẢI TRANG</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mt-4 text-xs text-muted-foreground">
+          Log trên trang là bản rút gọn để minh họa, không phải kết quả quét trực tiếp. Tab “Sau khi sửa” là kết quả mong đợi khi áp dụng mẫu youtube-facade.html; hãy chạy lại dynamic_scan.py để xác nhận trên website của bạn.
+        </p>
+      </div>
+    </section>
+    <section id="platforms" class="scroll-mt-20 section-space">
+      <div class="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-10">
+        <div class="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div class="max-w-[720px]">
+            <p class="section-eyebrow">
+              <span class="size-1.5 rounded-full bg-signal">
+              </span>
+              Nền tảng hỗ trợ
+            </p>
+            <h2 class="mt-3 text-3xl leading-tight font-semibold sm:text-[38px]">
+              Tìm đúng chỗ cần sửa.
+            </h2>
+            <p class="mt-3 max-w-[660px] text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+              Hướng dẫn khắc phục theo cách website được xây dựng — với đoạn mã tham khảo để đội ngũ kỹ thuật bắt đầu.
+            </p>
+          </div>
+        </div>
+        <div dir="ltr" data-orientation="horizontal" class="mt-9">
+          <div role="tablist" aria-orientation="horizontal" class="inline-flex items-center text-muted-foreground h-auto w-full justify-start gap-1 overflow-x-auto rounded-none border-b border-border bg-transparent p-0" data-orientation="horizontal">
+            <button type="button" role="tab" aria-selected="true" data-platform="Shopify" aria-controls="platform-Shopify" data-state="active" id="tab-platform-Shopify" class="inline-flex items-center justify-center whitespace-nowrap py-1 font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed h-11 rounded-none border-b-2 border-transparent px-4 text-sm data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none" data-orientation="horizontal">
+              Shopify
+            </button>
+            <button type="button" role="tab" aria-selected="false" data-platform="WordPress" aria-controls="platform-WordPress" data-state="inactive" id="tab-platform-WordPress" class="inline-flex items-center justify-center whitespace-nowrap py-1 font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed h-11 rounded-none border-b-2 border-transparent px-4 text-sm data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none" data-orientation="horizontal">
+              WordPress
+            </button>
+            <button type="button" role="tab" aria-selected="false" data-platform="Custom-Code" aria-controls="platform-Custom-Code" data-state="inactive" id="tab-platform-Custom-Code" class="inline-flex items-center justify-center whitespace-nowrap py-1 font-medium ring-offset-background cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed h-11 rounded-none border-b-2 border-transparent px-4 text-sm data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none" data-orientation="horizontal">
+              Custom Code
+            </button>
+          </div>
+          <div data-state="active" data-orientation="horizontal" role="tabpanel" aria-labelledby="tab-platform-Shopify" id="platform-Shopify" tabindex="0" class="ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-0 animate-in fade-in-0 duration-200" style="animation-duration:0s">
+            <div class="grid gap-8 border-b border-border py-7 md:grid-cols-[0.95fr_1.05fr] md:gap-12 md:py-9">
+              <div>
+                <p class="font-mono text-[10px] text-cyan">Customer Privacy API</p>
+                <h3 class="mt-3 text-2xl leading-tight font-semibold">Đồng bộ lựa chọn với pixel của cửa hàng.</h3>
+                <p class="mt-3 text-sm leading-6 text-muted-foreground">Dùng cài đặt quyền riêng tư gốc của Shopify, giới hạn vùng Việt Nam và kiểm tra cách consent truyền tới ứng dụng cùng kênh quảng cáo.</p>
+                <ul class="mt-5 space-y-2.5">
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Kiểm tra banner Customer Privacy theo thị trường</li>
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Đối soát trạng thái consent với pixel và Google Ads</li>
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Rà soát Shopify App Embeds nạp tracker động</li>
+                </ul>
+                <p class="mt-5 text-xs text-muted-foreground">Hướng dẫn: <a class="inline-link" href="https://github.com/gonostudy305/vn-law-guard/blob/main/references/platforms/shopify.md" target="_blank" rel="noopener">references/platforms/shopify.md</a></p>
+              </div>
+              <div class="min-w-0 overflow-hidden rounded-[6px] border border-border bg-console">
+                <div class="flex items-center justify-between gap-3 border-b border-console-border px-4 py-3">
+                  <span class="flex min-w-0 items-center gap-2 font-mono text-[10px] text-console-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-code-corner shrink-0 text-cyan" aria-hidden="true"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="m5 16-3 3 3 3" /><path d="m9 22 3-3-3-3" /></svg>
+                    <span class="truncate">shopify-consent-mode.liquid</span>
+                  </span>
+                  <span class="font-mono text-[9px] text-signal">TRÍCH ĐOẠN</span>
+                </div>
+<pre class="overflow-x-auto px-4 py-5 font-mono text-xs leading-6 text-console-foreground"><code>gtag('consent', 'default', {
+  analytics_storage: 'denied', ad_storage: 'denied', …
+});
+document.addEventListener('visitorConsentCollected', function (e) {
+  apply(e.detail.analyticsAllowed, e.detail.marketingAllowed);
+});</code></pre>
+                <div class="border-t border-console-border px-4 py-3 text-[10px] leading-5 text-console-muted">
+                  Trích đoạn rút gọn — cần điều chỉnh và đo lại theo cấu hình thực tế. <a class="inline-link" href="https://github.com/gonostudy305/vn-law-guard/blob/main/templates/remediation/shopify-consent-mode.liquid" target="_blank" rel="noopener">Xem mẫu đầy đủ</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-state="inactive" data-orientation="horizontal" role="tabpanel" aria-labelledby="tab-platform-WordPress" hidden="" id="platform-WordPress" tabindex="0" class="ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-0 animate-in fade-in-0 duration-200">
+            <div class="grid gap-8 border-b border-border py-7 md:grid-cols-[0.95fr_1.05fr] md:gap-12 md:py-9">
+              <div>
+                <p class="font-mono text-[10px] text-cyan">WooCommerce · plugin consent</p>
+                <h3 class="mt-3 text-2xl leading-tight font-semibold">Rà cấu hình, không chỉ nhìn giao diện banner.</h3>
+                <p class="mt-3 text-sm leading-6 text-muted-foreground">Đối chiếu cài đặt Complianz hoặc CookieYes với request thực tế; ưu tiên trì hoãn video nhúng và form thông tin khách hàng.</p>
+                <ul class="mt-5 space-y-2.5">
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Kiểm tra quy tắc chặn trước consent</li>
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Trì hoãn iframe và mã bên thứ ba</li>
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Rà checkbox trên form tư vấn, báo giá</li>
+                </ul>
+                <p class="mt-5 text-xs text-muted-foreground">Hướng dẫn: <a class="inline-link" href="https://github.com/gonostudy305/vn-law-guard/blob/main/references/platforms/wordpress-woocommerce.md" target="_blank" rel="noopener">references/platforms/wordpress-woocommerce.md</a></p>
+              </div>
+              <div class="min-w-0 overflow-hidden rounded-[6px] border border-border bg-console">
+                <div class="flex items-center justify-between gap-3 border-b border-console-border px-4 py-3">
+                  <span class="flex min-w-0 items-center gap-2 font-mono text-[10px] text-console-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-code-corner shrink-0 text-cyan" aria-hidden="true"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="m5 16-3 3 3 3" /><path d="m9 22 3-3-3-3" /></svg>
+                    <span class="truncate">youtube-facade.html</span>
+                  </span>
+                  <span class="font-mono text-[9px] text-signal">TRÍCH ĐOẠN</span>
+                </div>
+<pre class="overflow-x-auto px-4 py-5 font-mono text-xs leading-6 text-console-foreground"><code>&lt;div class="yt-facade" data-id="VIDEO_ID"&gt;
+  &lt;button type="button" aria-label="Phát video"&gt;▶&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+                <div class="border-t border-console-border px-4 py-3 text-[10px] leading-5 text-console-muted">
+                  Trích đoạn rút gọn — cần điều chỉnh và đo lại theo cấu hình thực tế. <a class="inline-link" href="https://github.com/gonostudy305/vn-law-guard/blob/main/templates/remediation/youtube-facade.html" target="_blank" rel="noopener">Xem mẫu đầy đủ</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-state="inactive" data-orientation="horizontal" role="tabpanel" aria-labelledby="tab-platform-Custom-Code" hidden="" id="platform-Custom-Code" tabindex="0" class="ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-0 animate-in fade-in-0 duration-200">
+            <div class="grid gap-8 border-b border-border py-7 md:grid-cols-[0.95fr_1.05fr] md:gap-12 md:py-9">
+              <div>
+                <p class="font-mono text-[10px] text-cyan">Next.js · PHP · Laravel · HTML tĩnh</p>
+                <h3 class="mt-3 text-2xl leading-tight font-semibold">Tích hợp gọn, phù hợp với luồng hiện có.</h3>
+                <p class="mt-3 text-sm leading-6 text-muted-foreground">Mẫu consent nhẹ để đội phát triển ghép vào ứng dụng và kiểm tra rằng form báo giá chỉ lưu thông tin sau khi có lựa chọn rõ ràng.</p>
+                <ul class="mt-5 space-y-2.5">
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Không phụ thuộc thư viện giao diện nặng</li>
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Đồng bộ lựa chọn với các script theo dõi</li>
+                  <li class="flex items-start gap-2 text-sm text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Đối chiếu trạng thái và request sau sửa</li>
+                </ul>
+                <p class="mt-5 text-xs text-muted-foreground">Hướng dẫn: <a class="inline-link" href="https://github.com/gonostudy305/vn-law-guard/blob/main/references/platforms/custom-code.md" target="_blank" rel="noopener">references/platforms/custom-code.md</a></p>
+              </div>
+              <div class="min-w-0 overflow-hidden rounded-[6px] border border-border bg-console">
+                <div class="flex items-center justify-between gap-3 border-b border-console-border px-4 py-3">
+                  <span class="flex min-w-0 items-center gap-2 font-mono text-[10px] text-console-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-code-corner shrink-0 text-cyan" aria-hidden="true"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="m5 16-3 3 3 3" /><path d="m9 22 3-3-3-3" /></svg>
+                    <span class="truncate">generic-consent-mode.html</span>
+                  </span>
+                  <span class="font-mono text-[9px] text-signal">TRÍCH ĐOẠN</span>
+                </div>
+<pre class="overflow-x-auto px-4 py-5 font-mono text-xs leading-6 text-console-foreground"><code>gtag('consent', 'default', {
+  ad_storage: 'denied', ad_user_data: 'denied',
+  ad_personalization: 'denied', analytics_storage: 'denied'
+});
+// GA4/GTM/Pixel chỉ được nạp sau khi khách bấm Chấp nhận</code></pre>
+                <div class="border-t border-console-border px-4 py-3 text-[10px] leading-5 text-console-muted">
+                  Trích đoạn rút gọn — cần điều chỉnh và đo lại theo cấu hình thực tế. <a class="inline-link" href="https://github.com/gonostudy305/vn-law-guard/blob/main/templates/remediation/generic-consent-mode.html" target="_blank" rel="noopener">Xem mẫu đầy đủ</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="pilot" class="scroll-mt-20 border-y border-border/70 bg-secondary/25 py-16 sm:py-20" aria-label="Cách bắt đầu">
+      <div class="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-10">
+        <div class="max-w-[720px]">
+          <p class="section-eyebrow">
+            <span class="size-1.5 rounded-full bg-signal"></span>
+            Cách bắt đầu
+          </p>
+          <h2 class="mt-3 text-3xl leading-tight font-semibold sm:text-[38px]">Tự chạy, hoặc nhờ người rà giúp.</h2>
+          <p class="mt-3 max-w-[660px] text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">Công cụ miễn phí theo giấy phép MIT. Cần Python 3.10+ và Git; chạy được trên Windows, macOS, Linux.</p>
+        </div>
+        <div class="mt-10 grid gap-4 lg:grid-cols-2">
+          <article class="flex h-full flex-col border-t-2 border-signal bg-card px-5 py-5 sm:px-7 sm:py-6">
+            <div class="flex items-center justify-between gap-3">
+              <span class="font-mono text-[10px] tracking-wider text-signal">A / TỰ LÀM · LẬP TRÌNH VIÊN, AGENCY</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-terminal text-signal" aria-hidden="true"><path d="m7 11 2-2-2-2" /><path d="M11 13h4" /><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /></svg>
+            </div>
+            <h3 class="mt-5 text-xl font-semibold">Cài đặt và quét một website</h3>
+<pre class="mt-5 overflow-x-auto rounded-[6px] border border-border bg-console px-4 py-4 font-mono text-xs leading-6 text-console-foreground"><code>git clone https://github.com/gonostudy305/vn-law-guard.git
+cd vn-law-guard
+python -m pip install -r requirements.txt
+python -m playwright install chromium
+python scripts/dynamic_scan.py https://example.vn --out ./report</code></pre>
+            <p class="mt-4 text-sm leading-6 text-muted-foreground">Thêm <code class="font-mono text-xs text-foreground">--lang en</code> để có báo cáo tiếng Anh. Dùng như AI skill cho Claude Code hoặc Antigravity: xem README.</p>
+            <a href="https://github.com/gonostudy305/vn-law-guard" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring py-2 mt-6 h-11 px-5 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground self-start">Mở README trên GitHub <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></a>
+          </article>
+          <article class="flex h-full flex-col border-t-2 border-warning bg-card px-5 py-5 sm:px-7 sm:py-6">
+            <div class="flex items-center justify-between gap-3">
+              <span class="font-mono text-[10px] tracking-wider text-warning">B / CẦN NGƯỜI LÀM GIÚP · CHỦ DOANH NGHIỆP</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users text-warning" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+            </div>
+            <h3 class="mt-5 text-xl font-semibold">Rà soát và sửa giúp, có báo cáo bằng chứng</h3>
+            <ul class="mt-5 flex-1 space-y-3.5">
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg><span>Chạy bộ quét trên website của bạn và giải thích kết quả bằng ngôn ngữ dễ hiểu.</span></li>
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg><span>Sửa theme, banner cookie hoặc video nhúng khi bạn đồng ý, rồi đo lại để đối chiếu.</span></li>
+              <li class="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check mt-0.5 shrink-0 text-signal" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg><span>Bàn giao hồ sơ kỹ thuật để pháp chế hoặc luật sư xem tiếp.</span></li>
+            </ul>
+            <a href="https://khamweb.gonovn.me/?ref=oss" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring py-2 mt-6 h-11 px-5 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 self-start">Xem dịch vụ cho doanh nghiệp <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></a>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="border-b border-border/70 py-12 sm:py-14">
+      <div class="mx-auto flex max-w-[1440px] flex-col gap-5 px-5 sm:px-8 md:flex-row md:items-start md:gap-7 lg:px-10">
+        <span class="grid size-10 shrink-0 place-items-center rounded-md border border-cyan/25 bg-cyan/10 text-cyan">
+          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-xml" aria-hidden="true">
+            <path d="m18 16 4-4-4-4" />
+            <path d="m6 8-4 4 4 4" />
+            <path d="m14.5 4-5 16" />
+          </svg>
+        </span>
+        <div>
+          <p class="text-sm font-semibold">
+            Mã nguồn mở &amp; ghi nhận upstream
+          </p>
+          <p class="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">
+            Checklist pháp lý trong thư mục <code class="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground">references/law/</code> giữ nguyên từ dự án <a class="inline-link" href="https://github.com/mhfed/vn-law-check" target="_blank" rel="noopener">vn-law-check</a> của tác giả <code class="font-mono text-xs text-foreground">mhfed</code>, theo giấy phép MIT. Cập nhật từ upstream bằng <a class="inline-link font-mono text-xs" href="https://github.com/gonostudy305/vn-law-guard/blob/main/scripts/sync_upstream.sh" target="_blank" rel="noopener">scripts/sync_upstream.sh</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="bg-secondary/20">
+    <div class="mx-auto max-w-[1440px] px-5 py-12 sm:px-8 lg:px-10">
+      <div class="border-l-[3px] border-warning bg-warning/5 px-5 py-4 sm:px-6">
+        <p class="text-sm font-semibold text-foreground">
+          Tuyên bố miễn trừ trách nhiệm
+        </p>
+        <p class="mt-2 max-w-5xl text-sm leading-6 text-muted-foreground">
+          VN Law Guard là công cụ hỗ trợ kỹ thuật, đo lường bằng chứng thực nghiệm trên trình duyệt. Công cụ không đưa ra kết luận pháp lý chính thức, không cấu thành dịch vụ tư vấn pháp luật và không thay thế ý kiến chuyên môn của luật sư. Không cam kết chứng nhận “an toàn 100%” hay “chống phạt”. Quyết định tuân thủ cuối cùng thuộc về chủ sở hữu website và đội ngũ pháp lý của bạn.
+        </p>
+      </div>
+      <div class="mt-9 flex flex-col justify-between gap-6 border-t border-border pt-6 sm:flex-row sm:items-center">
+        <a href="#top" class="inline-flex items-center gap-2 text-sm font-semibold">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check text-signal" aria-hidden="true">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          VN Law Guard
+          <span class="font-mono text-[10px] font-normal text-muted-foreground">
+            v0.2.0
+          </span>
+        </a>
+        <nav class="flex flex-wrap gap-x-5 gap-y-3 text-xs text-muted-foreground" aria-label="Tài liệu">
+          <a class="nav-link inline-flex items-center gap-1" href="https://github.com/gonostudy305/vn-law-guard" target="_blank" rel="noopener">
+            GitHub
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true">
+              <path d="M15 3h6v6" />
+              <path d="M10 14 21 3" />
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
+          <a class="nav-link inline-flex items-center gap-1" href="https://github.com/gonostudy305/vn-law-guard/blob/main/LICENSE" target="_blank" rel="noopener">
+            LICENSE · MIT
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true">
+              <path d="M15 3h6v6" />
+              <path d="M10 14 21 3" />
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
+          <a class="nav-link inline-flex items-center gap-1" href="https://github.com/gonostudy305/vn-law-guard/blob/main/NOTICE.md" target="_blank" rel="noopener">
+            NOTICE
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true">
+              <path d="M15 3h6v6" />
+              <path d="M10 14 21 3" />
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
+          <a class="nav-link inline-flex items-center gap-1" href="https://khamweb.gonovn.me/?ref=oss">
+            Dịch vụ cho doanh nghiệp
+          </a>
+          <a class="nav-link inline-flex items-center gap-1" href="https://vbpl.vn/" target="_blank" rel="noopener">
+            Văn bản pháp luật · vbpl.vn
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true">
+              <path d="M15 3h6v6" />
+              <path d="M10 14 21 3" />
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
+        </nav>
+      </div>
+      <div class="mt-5 flex flex-col gap-2 text-[11px] text-muted-foreground sm:flex-row sm:justify-between">
+        <span>
+          © 2026 Contributors to vn-law-guard &amp; upstream contributors.
+        </span>
+        <span>
+          Trang này không dùng cookie, analytics hay request bên thứ ba · Không phải tư vấn pháp lý
+        </span>
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>
