@@ -105,3 +105,85 @@ def test_dynamic_scan_on_mock_site(local_server, tmp_path):
     assert data["url"].startswith("http://127.0.0.1")
     assert len(data.get("inventory", {}).get("forms", [])) >= 1
     assert data.get("phases", {}).get("none", {}).get("banner", {}).get("cmp") == "Shopify Customer Privacy"
+
+
+# --- Tín hiệu và báo cáo song ngữ (không cần trình duyệt) ---
+
+from scripts.dynamic_scan import LANGS, MESSAGES, REPORT_TEXT, md_report, signals
+
+
+def _phase(cookies=(), requests=(), banner=None, error=None):
+    return {"tracking_cookies": list(cookies), "tracker_requests": list(requests), "banner": banner,
+            "error": error, "clicked": None, "third_party_hosts": []}
+
+
+def test_message_tables_have_same_keys():
+    keys = [set(MESSAGES[l]) for l in LANGS]
+    assert all(k == keys[0] for k in keys)
+    texts = [set(REPORT_TEXT[l]) for l in LANGS]
+    assert all(t == texts[0] for t in texts)
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_signals_tracking_before_consent(lang):
+    ga = {"vendor": "Google Analytics", "stage": "load", "gcs": None, "url": "https://www.google-analytics.com/g/collect"}
+    phases = {"none": _phase(["_ga"], [ga]), "decline": _phase(["_ga"], [ga]), "accept": _phase(["_ga"], [ga])}
+    inv = {"forms": [], "policy_links": {"privacy": [{"h": "/p", "t": "Privacy"}]}, "privacy_pages": []}
+    codes = {s["code"] for s in signals(phases, inv, lang)}
+    assert {"TRACKING_COOKIE_BEFORE_CHOICE", "TRACKER_REQUEST_BEFORE_CHOICE", "TRACKING_AFTER_DECLINE",
+            "NO_BANNER_BUT_TRACKERS"} <= codes
+
+
+def test_denied_consent_mode_ping_is_not_tracking():
+    ping = {"vendor": "Google Analytics", "stage": "load", "gcs": "G100", "url": "https://www.google-analytics.com/g/collect?gcs=G100"}
+    banner = {"cmp": "X", "has_decline": True}
+    phases = {"none": _phase([], [ping], banner), "decline": _phase([], [ping], banner),
+              "accept": _phase(["_ga"], [], banner)}
+    inv = {"forms": [], "policy_links": {"privacy": [{"h": "/p", "t": "p"}]}, "privacy_pages": []}
+    assert signals(phases, inv) == []
+
+
+def test_english_report_has_no_vietnamese_headings():
+    data = {"url": "https://example.vn", "lang": "en", "scanned_at": "2026-11-09T00:00:00+07:00",
+            "phases": {"none": _phase()}, "screenshots": [], "signals": [],
+            "inventory": {"platform": ["Shopify"], "policy_links": {}, "forms": [], "privacy_pages": []}}
+    md = md_report(data)
+    assert "Dynamic scan" in md and "No automatic signals" in md
+    assert "Quét động" not in md
+
+
+def test_invalid_lang_rejected(tmp_path):
+    with pytest.raises(ValueError):
+        scan_site("http://127.0.0.1:9", out_dir=str(tmp_path), lang="fr")
+
+
+# --- Trang vi phạm: đặt cookie theo dõi ngay khi tải, không có banner ---
+
+class BadSiteHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.end_headers()
+        self.wfile.write("""<!doctype html><html><head><title>Bad</title>
+<script>document.cookie = "_ga=GA1.1.123.456; path=/";</script></head>
+<body><form action="/contact"><input type="email" name="email"><button>Send</button></form>
+<a href="/about">About</a></body></html>""".encode("utf-8"))
+
+    def log_message(self, format, *args):
+        pass
+
+
+@pytest.fixture(scope="module")
+def bad_server():
+    server = socketserver.TCPServer(("127.0.0.1", 0), BadSiteHandler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    yield f"http://127.0.0.1:{server.server_address[1]}"
+    server.shutdown()
+
+
+def test_dynamic_scan_flags_cookie_before_consent(bad_server, tmp_path):
+    data = scan_site(bad_server, out_dir=str(tmp_path), with_mobile=False, lang="en")
+    codes = {s["code"] for s in data["signals"]}
+    assert "_ga" in data["phases"]["none"]["tracking_cookies"]
+    assert {"TRACKING_COOKIE_BEFORE_CHOICE", "FORM_NO_NOTICE", "NO_PRIVACY_LINK"} <= codes
+    assert "Dynamic scan" in (tmp_path / "scan.md").read_text(encoding="utf-8")

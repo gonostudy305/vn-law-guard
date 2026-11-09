@@ -33,7 +33,8 @@ Toàn bộ 8 nguyên tắc trong `references/law/RULES.md` vẫn áp dụng: kh�
    ```bash
    python scripts/dynamic_scan.py https://ten-mien.vn --out ./vn-legal-audit
    ```
-   Cần `pip install playwright && python -m playwright install chromium`. Script chạy 3 phiên sạch (chưa chọn / Từ chối / Chấp nhận) ở desktop 1366 và mobile 390, ghi `scan.json`, `scan.md` và ảnh chụp. Đọc `scan.md` trước.
+   Cần `pip install -r requirements.txt && python -m playwright install chromium`. Script chạy 3 phiên sạch (chưa chọn / Từ chối / Chấp nhận) ở desktop 1366 và 1 phiên mobile 390, ghi `scan.json`, `scan.md` và ảnh chụp. Đọc `scan.md` trước. Chỉ quét website của người dùng hoặc website họ được phép kiểm tra.
+   **Ngôn ngữ:** người dùng viết tiếng Anh hoặc muốn báo cáo tiếng Anh thì thêm `--lang en` và viết báo cáo bằng tiếng Anh, giữ nguyên số hiệu văn bản tiếng Việt (vd "Decree 356/2025/NĐ-CP, Art. 5") vì checklist trong `references/law/` viết bằng tiếng Việt.
 2. **Quét tĩnh** khi có mã nguồn: `bash scripts/scan.sh <thư-mục>` (bản gốc vn-law-check).
 3. **Phân loại mức** theo `references/law/00-triage.md`, dùng dữ liệu quét động thay cho đoán (form, tracker, giỏ hàng, chatbot).
 4. **Nền tảng:** `scan.json > platform` cho biết Shopify / WordPress / WooCommerce / Haravan / Sapo / khác. Mở đúng file trong `references/platforms/` để biết chỗ cần xem trong admin/theme và cách sửa đặc thù. Nền tảng không có module thì dùng `references/platforms/custom-code.md`.

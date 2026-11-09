@@ -1,0 +1,21 @@
+name: Lỗi / Bug
+description: Bộ quét hoặc mẫu sửa lỗi chạy sai / Scanner or template misbehaves
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Mô tả / Description
+      description: Chạy lệnh gì, mong đợi gì, thực tế ra sao. / Command, expected, actual.
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Môi trường / Environment
+      placeholder: "OS, Python version, playwright version, nền tảng website (Shopify, WordPress...)"
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Bằng chứng / Evidence
+      description: Đoạn scan.md hoặc scan.json liên quan. Che thông tin của website khách. / Relevant output, with client details removed.

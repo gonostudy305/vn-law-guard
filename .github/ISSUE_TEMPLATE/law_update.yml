@@ -1,0 +1,24 @@
+name: Cập nhật luật / Law update
+description: Văn bản mới, hết hiệu lực, sai số điều hoặc mức phạt / New, expired or mis-cited legal instrument
+labels: [law]
+body:
+  - type: input
+    id: instrument
+    attributes:
+      label: Văn bản / Instrument
+      placeholder: "VD: Nghị định 356/2025/NĐ-CP, Điều 5 khoản 2"
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Cần sửa gì / What should change
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Nguồn chính thức / Official source
+      description: Link vbpl.vn, Công báo, cổng Chính phủ/Bộ. Nguồn thứ cấp thì ghi rõ.
+    validations:
+      required: true

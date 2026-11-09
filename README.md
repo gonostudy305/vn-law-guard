@@ -1,126 +1,105 @@
 # VN Law Guard
 
-> **Công cụ hỗ trợ rà soát kỹ thuật tuân thủ pháp luật Việt Nam cho Website & E-commerce**  
-> Đo lường bằng chứng cookie & tracker trên trình duyệt thật — Giúp kỹ sư và chủ website rà soát lỗ hổng kỹ thuật trong một buổi làm việc.
+[![tests](https://github.com/gonostudy305/vn-law-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/gonostudy305/vn-law-guard/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
----
+**Tiếng Việt** · [English](README.en.md)
 
-## 🌟 Giới Thiệu & Điểm Khác Biệt
+Bộ công cụ rà soát kỹ thuật website theo pháp luật Việt Nam: **đo bằng chứng cookie và tracking trên trình duyệt thật**, đối chiếu với checklist pháp lý, và **mẫu sửa lỗi** cho từng nền tảng. Dùng được như một AI skill (Claude Code, Antigravity…) hoặc chạy độc lập bằng Python.
 
-**VN Law Guard** được xây dựng nhằm giải quyết bài toán tuân thủ pháp luật thực tế của các website và nền tảng thương mại điện tử hoạt động tại Việt Nam: bảo vệ dữ liệu cá nhân (Luật 91/2025, NĐ 356/2025, NĐ 330/2026), thương mại điện tử (Luật 122/2025, NĐ 248/2026), bảo vệ quyền lợi người tiêu dùng, an ninh mạng và quảng cáo trực tuyến.
+> Đây là công cụ hỗ trợ rà soát, **không phải ý kiến pháp lý** và không cấp "chứng nhận tuân thủ". Xem [DISCLAIMER.md](DISCLAIMER.md).
 
-### 3 Năng Lực Kỹ Thuật Mở Rộng:
+## Dành cho ai
 
-1. **Quét động bằng trình duyệt thật (`scripts/dynamic_scan.py`):**
-   - Mở website bằng Chromium không giao diện (Playwright), mỗi phiên là một trình duyệt sạch.
-   - Desktop 1366px chạy **3 phiên** (chưa chọn / bấm Từ chối / bấm Chấp nhận); mobile 390px chạy thêm 1 phiên chưa chọn để chụp và đo banner.
-   - Ghi lại request gửi tới dịch vụ theo dõi (Google Analytics 4, Google Ads, Meta Pixel, TikTok Pixel, YouTube nhúng...) và cookie theo dõi ở từng phiên.
-   - Tách riêng ping Consent Mode khi khách đã từ chối (`gcs=G100`, không đặt cookie) để không chấm nhầm thành tracking.
-   - Kết quả là dấu hiệu kèm bằng chứng, phụ thuộc vị trí máy quét; không phải kết luận pháp lý.
-2. **Hướng dẫn rà soát theo từng nền tảng (`references/platforms/`):**
-   - Hướng dẫn chuyên sâu cho: **Shopify**, **WordPress / WooCommerce**, **Haravan / Sapo**, và **Custom Code (Next.js, PHP, Node)**.
-   - Chỉ rõ vị trí cấu hình trong Admin và các file template cần điều chỉnh. Module Shopify rút từ dự án thật; module Haravan/Sapo chưa kiểm chứng trên dự án thật.
-3. **Kho giải pháp vá lỗi thực tế (`templates/remediation/`):**
-   - Cổng Google Consent Mode v2 kết hợp Shopify Customer Privacy API (`shopify-consent-mode.liquid`).
-   - Mẫu nhúng video YouTube bấm-mới-tải (`youtube-facade.html`) triệt tiêu cookie bên thứ ba khi khách chưa đồng ý.
-   - Mẫu ô đồng ý và điều khoản xử lý dữ liệu cho form liên hệ / báo giá (`form-consent.html`).
+- Lập trình viên, agency làm website cho doanh nghiệp Việt Nam, muốn bàn giao website kèm bằng chứng đo cookie.
+- Chủ website, marketer cần biết website có đang chạy tracking trước khi khách đồng ý không.
+- Doanh nghiệp, lập trình viên nước ngoài làm website cho thị trường Việt Nam: có báo cáo tiếng Anh (`--lang en`) và [README tiếng Anh](README.en.md).
 
----
+## Làm được gì
 
-## 🤝 Ghi Công Nguồn Gốc (Acknowledgments & Upstream)
+| Phần | Nội dung |
+|---|---|
+| Quét động [`scripts/dynamic_scan.py`](scripts/dynamic_scan.py) | Mở website bằng Chromium (Playwright), 3 phiên sạch ở desktop 1366: chưa chọn / bấm Từ chối / bấm Chấp nhận, thêm 1 phiên mobile 390. Ghi cookie và request theo dõi từng phiên (GA4, Google Ads, Meta, TikTok, YouTube nhúng…), nhận diện banner (Shopify, OneTrust, Cookiebot, CookieYes, Complianz, banner tự viết), kiểm kê form, trang chính sách, thông tin doanh nghiệp. Xuất `scan.json`, `scan.md`, ảnh chụp. |
+| Quét tĩnh [`scripts/scan.sh`](scripts/scan.sh) | Quét mã nguồn (từ vn-law-check). |
+| Checklist pháp lý [`references/law/`](references/law/) | Dữ liệu cá nhân, thương mại điện tử, an ninh mạng, người tiêu dùng, quảng cáo, giao dịch điện tử, AI, mức phạt. Giữ nguyên từ [vn-law-check](https://github.com/mhfed/vn-law-check). |
+| Hướng dẫn theo nền tảng [`references/platforms/`](references/platforms/) | Shopify (rút từ dự án thật), WordPress/WooCommerce, Haravan/Sapo (chưa kiểm chứng trên dự án thật), website tự code. |
+| Mẫu sửa lỗi [`templates/remediation/`](templates/remediation/) | Consent Mode v2 cho Shopify và web thường, video YouTube bấm-mới-tải, thông báo và ô đồng ý cho form, mục cookie trong chính sách bảo mật. |
+| Quy trình | [Chuẩn bằng chứng](references/evidence-standard.md), [mẫu báo cáo](templates/report-template.md), [cổng kiểm tra go-live](references/build-checklist.md). |
 
-Dự án này trân trọng ghi nhận và kế thừa toàn bộ cơ sở tri thức pháp lý mở từ:
-- **Dự án gốc:** [vn-law-check](https://github.com/mhfed/vn-law-check) của tác giả `mhfed` (Giấy phép MIT, xem `LICENSE.upstream` và `NOTICE.md`).
-- Toàn bộ 11 tài liệu checklist luật trong thư mục `references/law/` được duy trì nguyên vẹn và liên tục cập nhật theo upstream bằng lệnh `bash scripts/sync_upstream.sh`.
+Dữ liệu luật cập nhật đến **03/11/2026** (xem đầu [`legal-references.md`](references/law/legal-references.md)). Luật Việt Nam đang thay đổi nhanh: luôn kiểm tra lại văn bản còn hiệu lực tại [vbpl.vn](https://vbpl.vn) hoặc [thuvienphapluat.vn](https://thuvienphapluat.vn).
 
----
+## Cài đặt
 
-## 🚀 Hướng Dẫn Sử Dụng Nhanh
+Cần Python 3.10+ và Git. Quét tĩnh (`scan.sh`) cần bash: có sẵn trên macOS/Linux, trên Windows dùng Git Bash hoặc WSL.
 
-### 1. Cài đặt môi trường
-Yêu cầu Python 3.10+ và Playwright:
 ```bash
-pip install playwright
+git clone https://github.com/gonostudy305/vn-law-guard.git
+cd vn-law-guard
+python -m pip install -r requirements.txt
 python -m playwright install chromium
 ```
 
-### 2. Quét động một website đang chạy (URL công khai)
+Linux server/CI thiếu thư viện hệ thống thì dùng `python -m playwright install --with-deps chromium`.
+
+## Sử dụng
+
+### Quét một website
+
 ```bash
-python scripts/dynamic_scan.py https://ten-website.vn --out ./bao-cao-kiem-toan
+python scripts/dynamic_scan.py https://ten-mien.vn --out ./bao-cao
+python scripts/dynamic_scan.py https://example.com --out ./report --lang en
 ```
-*Kết quả xuất ra gồm: tệp dữ liệu chi tiết `scan.json`, báo cáo tổng hợp `scan.md` và ảnh chụp màn hình bằng chứng thực tế tại từng trạng thái.*
 
-### Chạy test
+| Tùy chọn | Ý nghĩa |
+|---|---|
+| `--out` | Thư mục kết quả (mặc định `vn-legal-audit`) |
+| `--lang vi\|en` | Ngôn ngữ báo cáo `scan.md` và ghi chú tín hiệu (mặc định `vi`) |
+| `--no-mobile` | Bỏ phiên mobile 390 |
+
+Mỗi tín hiệu có mã cố định (ví dụ `TRACKING_COOKIE_BEFORE_CHOICE`) và mục checklist tương ứng (ví dụ `01-C`), để máy và người cùng đọc được. Cách đọc bằng chứng: [`references/evidence-standard.md`](references/evidence-standard.md).
+
+Lưu ý khi đọc kết quả:
+- Kết quả phụ thuộc **vị trí máy quét**: nhiều nền tảng chỉ hiện banner với IP thuộc vùng bắt buộc xin đồng ý. Muốn đo như khách Việt Nam thì chạy từ IP Việt Nam.
+- Bộ quét mở trang chủ, một trang nội bộ và trang chính sách. Trang thanh toán, tài khoản cần kiểm tra thêm bằng tay.
+- Ping Consent Mode khi khách đã từ chối (`gcs=G100`) không đặt cookie và không bị tính là tracking.
+
+### Dùng như AI skill
+
+Đặt repo vào thư mục skills của agent:
+
 ```bash
-pip install pytest
-python -m pytest tests -v
+# Claude Code
+git clone https://github.com/gonostudy305/vn-law-guard.git ~/.claude/skills/vn-law-guard
 ```
-Test quét động dựng một trang thử trên `127.0.0.1`, không gọi ra Internet.
 
-### 3. Quét tĩnh mã nguồn dự án (khi có source code)
+Antigravity: `~/.gemini/config/skills/vn-law-guard`. Theo dự án: `.agents/skills/vn-law-guard`. Sau đó yêu cầu agent, ví dụ: *"Audit website https://… theo luật Việt Nam"* hoặc *"Kiểm tra website trước khi go-live"*. Agent làm theo [`SKILL.md`](SKILL.md): quét → phân loại → đối chiếu checklist → báo cáo có bằng chứng → chỉ sửa code khi bạn đồng ý.
+
+### Cập nhật dữ liệu luật từ vn-law-check
+
 ```bash
-bash scripts/scan.sh /duong-dan-toi-source-code
+bash scripts/sync_upstream.sh          # xem thay đổi
+bash scripts/sync_upstream.sh --apply  # chép sau khi đã xem
 ```
 
-### 4. Tích hợp làm AI Skill cho Coding Agent
-Skill viết theo định dạng `SKILL.md` chung, dùng được với các agent đọc định dạng này (Claude Code, Google Antigravity...):
-- Clone repo rồi đặt (hoặc tạo liên kết) vào thư mục skills của agent, ví dụ `~/.claude/skills/vn-law-guard` (Claude Code), `.agents/skills/vn-law-guard` (theo dự án) hoặc `~/.gemini/config/skills/vn-law-guard`.
-  ```bash
-  git clone https://github.com/gonostudy305/vn-law-guard.git ~/.claude/skills/vn-law-guard
-  ```
-- Gọi lệnh trong chat: `/vn-law-guard` hoặc yêu cầu: *"Audit kỹ thuật website này theo luật Việt Nam"*.
+## Sử dụng có trách nhiệm
 
----
+- Chỉ quét website của bạn, của khách hàng đã đồng ý, hoặc website bạn được phép kiểm tra. Bộ quét chỉ đọc trang công khai, không gửi form, không đăng nhập, không thanh toán, nhưng vẫn tạo lượt truy cập thật (khoảng 5 phiên trình duyệt mỗi lần chạy).
+- Không công bố tên website bị phát hiện lỗi khi chưa được chủ website đồng ý.
+- Kết luận cuối cùng về nghĩa vụ pháp lý, mức phạt thuộc về luật sư hoặc cơ quan có thẩm quyền.
 
-## 📁 Cấu Trúc Thư Mục
+## Phát triển
 
-```
-vn-law-guard/
-├── references/
-│   ├── law/                       # Cơ sở tri thức pháp luật gốc (sync từ vn-law-check)
-│   │   ├── 00-triage.md           # Phân loại độ phức tạp website
-│   │   ├── 01-personal-data-protection.md
-│   │   ├── 02-ecommerce.md
-│   │   ├── 08-penalties-reference.md
-│   │   └── legal-references.md
-│   ├── platforms/                 # Hướng dẫn chi tiết theo nền tảng CMS/E-commerce
-│   │   ├── shopify.md
-│   │   ├── wordpress-woocommerce.md
-│   │   ├── haravan-sapo.md
-│   │   └── custom-code.md
-│   ├── build-checklist.md         # Bảng kiểm soát trước khi Go-live website mới
-│   └── evidence-standard.md       # Tiêu chuẩn bằng chứng kỹ thuật hợp lệ
-├── scripts/
-│   ├── dynamic_scan.py            # Engine quét động không đầu (Playwright)
-│   ├── scan.sh                    # Quét tĩnh mã nguồn (bash)
-│   ├── fetch-site.sh              # Tải HTML tĩnh hỗ trợ quét
-│   └── sync_upstream.sh           # Script đồng bộ bộ luật từ upstream vn-law-check
-├── templates/
-│   ├── remediation/               # Kho mẫu vá lỗi (Shopify, YouTube Facade, Form)
-│   │   ├── shopify-consent-mode.liquid
-│   │   ├── shopify-cookie-settings-link.liquid
-│   │   ├── shopify-cookie-banner-style.liquid
-│   │   ├── generic-consent-mode.html
-│   │   ├── youtube-facade.html
-│   │   └── form-consent.html
-│   └── report-template.md         # Mẫu báo cáo kiểm toán có đối chiếu bằng chứng
-├── examples/                      # Báo cáo mẫu và khung chính sách bảo mật
-├── DISCLAIMER.md                  # Tuyên bố miễn trừ trách nhiệm pháp lý
-├── NOTICE.md                      # Chi tiết ghi công tác giả gốc
-├── LICENSE                        # Giấy phép MIT
-├── SKILL.md                       # Định nghĩa kỹ năng cho AI Coding Agents
-└── README.md
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest
 ```
 
----
+Test dựng các trang thử trên `127.0.0.1`, không gọi ra Internet. Góp ý, sửa luật, thêm nền tảng: xem [CONTRIBUTING.md](CONTRIBUTING.md). Lỗi bảo mật: xem [SECURITY.md](SECURITY.md). Lịch sử thay đổi: [CHANGELOG.md](CHANGELOG.md).
 
-## ⚖️ Tuyên Bố Miễn Trừ Trách Nhiệm (Legal Disclaimer)
+## Ghi công
 
-- **VN Law Guard** là công cụ hỗ trợ kỹ thuật nhằm phát hiện các dấu hiệu rủi ro và thu thập bằng chứng đo đạc thực tế trên trình duyệt. Công cụ này **không đưa ra kết luận pháp lý chính thức**, không cấu thành dịch vụ tư vấn pháp luật và không thay thế ý kiến chuyên môn của Luật sư hoặc cơ quan quản lý nhà nước.
-- Dự án không cam kết bất kỳ chứng nhận "an toàn 100%" hay "chống phạt". Người vận hành website chịu trách nhiệm cuối cùng về việc rà soát và quyết định áp dụng các biện pháp tuân thủ.
-- Chi tiết xem tại [DISCLAIMER.md](DISCLAIMER.md).
+Toàn bộ checklist pháp lý trong `references/law/`, `examples/`, `scripts/scan.sh`, `scripts/fetch-site.sh` lấy từ [mhfed/vn-law-check](https://github.com/mhfed/vn-law-check) (MIT). Chi tiết: [NOTICE.md](NOTICE.md), [LICENSE.upstream](LICENSE.upstream).
 
----
+## Giấy phép
 
-## 📄 Giấy Phép (License)
-Dự án được phát hành theo giấy phép mã nguồn mở [MIT License](LICENSE).
+[MIT](LICENSE).

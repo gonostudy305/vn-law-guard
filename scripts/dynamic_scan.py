@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """Quét động một website bằng trình duyệt thật để lấy bằng chứng cho audit pháp lý VN.
 
-    python scripts/dynamic_scan.py https://ten-mien.vn --out ./vn-legal-audit
+    python scripts/dynamic_scan.py https://ten-mien.vn --out ./vn-legal-audit [--lang en]
+
+EN: Scans a live website in a real browser (3 clean sessions: no choice / Decline / Accept)
+and records tracking requests and cookies per session, plus a homepage inventory, as evidence
+for a Vietnamese legal-compliance review. Read-only; signals, not legal conclusions.
+Use --lang en for an English report.
+
+Chỉ quét website của bạn hoặc website bạn được phép kiểm tra.
 
 Chạy 3 phiên trình duyệt sạch, mỗi phiên: mở trang chủ -> (thao tác) -> mở thêm 1 trang nội bộ.
   none     không bấm gì trên banner cookie (người dùng phớt lờ banner)
@@ -291,12 +298,97 @@ def inventory(browser, url):
     ctx.close()
     return inv
 
+# Thông điệp tín hiệu theo ngôn ngữ báo cáo. Mã (code) giữ cố định để máy đọc; chỉ chữ thay đổi.
+MESSAGES = {
+    "vi": {
+        "TRACKING_COOKIE_BEFORE_CHOICE": "Cookie theo dõi có khi chưa chọn gì: {cookies}",
+        "TRACKER_REQUEST_BEFORE_CHOICE": "{n} request theo dõi khi chưa chọn (đã loại ping Consent Mode bị từ chối)",
+        "TRACKING_AFTER_DECLINE": "Sau khi bấm Từ chối vẫn có cookie [{cookies}] / {n} request theo dõi",
+        "NO_BANNER_BUT_TRACKERS": "Có dịch vụ theo dõi nhưng không thấy banner cookie (kiểm tra lại: banner có thể chỉ hiện theo vùng)",
+        "NO_DECLINE_BUTTON": "Banner không có nút Từ chối ngang hàng với Chấp nhận",
+        "ACCEPT_DOES_NOT_ENABLE": "Bấm Chấp nhận nhưng không thấy cookie theo dõi: đo lường có thể đã hỏng",
+        "EMBED_BEFORE_CONSENT": "{embeds} nạp trước khi đồng ý (trang: {pages}). Dùng youtube-nocookie.com hoặc ảnh thay thế bấm-để-tải",
+        "PRECHECKED_CONSENT": "Form {form} có ô tích sẵn",
+        "FORM_NO_NOTICE": "Form {form} thu thông tin cá nhân nhưng không nhắc chính sách/mục đích",
+        "NO_PRIVACY_LINK": "Không thấy link chính sách bảo mật trên trang chủ",
+        "PRIVACY_PAGE_ERROR": "Link chính sách bảo mật {url} không mở được: {error}",
+        "POLICY_CITES_EXPIRED_LAW": "{url} dẫn văn bản đã hết hiệu lực: {refs}",
+        "POLICY_NO_COOKIE_SECTION": "{url} không nhắc cookie dù site có dịch vụ theo dõi",
+        "CONTINUE_MEANS_CONSENT": "{url} coi việc tiếp tục sử dụng là đồng ý: \"{quote}\"",
+        "THIRD_PARTY_CLAIM_MISMATCH": "{url} nói không chia sẻ bên thứ ba nhưng site gửi dữ liệu cho dịch vụ bên ngoài: \"{quote}\"",
+        "MULTIPLE_PRIVACY_PAGES": "Có nhiều trang chính sách bảo mật: {urls}. Kiểm tra nội dung có mâu thuẫn không",
+        "ECOM_NO_LINK": "Có dấu hiệu bán hàng nhưng không thấy link '{kind}' trên trang chủ",
+        "ECOM_NO_BCT_LINK": "Không thấy link online.gov.vn (thông báo/đăng ký Bộ Công Thương). Khung mới: cần tra cứu lại",
+        "ECOM_NO_TAX_ID": "Không thấy mã số thuế/số đăng ký doanh nghiệp trên trang chủ",
+        "NONE": "Không có tín hiệu tự động. Vẫn phải đối chiếu checklist thủ công.",
+        "homepage": "trang chủ",
+        "no_action": "(không action)",
+    },
+    "en": {
+        "TRACKING_COOKIE_BEFORE_CHOICE": "Tracking cookies present before any choice: {cookies}",
+        "TRACKER_REQUEST_BEFORE_CHOICE": "{n} tracking requests before any choice (denied Consent Mode pings excluded)",
+        "TRACKING_AFTER_DECLINE": "After clicking Decline there are still cookies [{cookies}] / {n} tracking requests",
+        "NO_BANNER_BUT_TRACKERS": "Trackers found but no cookie banner detected (re-check: some banners only show in certain regions)",
+        "NO_DECLINE_BUTTON": "Banner has no Decline button on equal footing with Accept",
+        "ACCEPT_DOES_NOT_ENABLE": "Clicking Accept sets no tracking cookies: measurement may be broken",
+        "EMBED_BEFORE_CONSENT": "{embeds} loaded before consent (page: {pages}). Use youtube-nocookie.com or a click-to-load placeholder",
+        "PRECHECKED_CONSENT": "Form {form} has a pre-ticked checkbox",
+        "FORM_NO_NOTICE": "Form {form} collects personal data without mentioning a policy/purpose",
+        "NO_PRIVACY_LINK": "No privacy policy link found on the homepage",
+        "PRIVACY_PAGE_ERROR": "Privacy policy link {url} could not be opened: {error}",
+        "POLICY_CITES_EXPIRED_LAW": "{url} cites legal documents no longer in force: {refs}",
+        "POLICY_NO_COOKIE_SECTION": "{url} does not mention cookies although the site uses trackers",
+        "CONTINUE_MEANS_CONSENT": "{url} treats continued use as consent: \"{quote}\"",
+        "THIRD_PARTY_CLAIM_MISMATCH": "{url} claims no sharing with third parties, but the site sends data to external services: \"{quote}\"",
+        "MULTIPLE_PRIVACY_PAGES": "Several privacy policy pages: {urls}. Check they do not contradict each other",
+        "ECOM_NO_LINK": "Selling signals found but no '{kind}' link on the homepage",
+        "ECOM_NO_BCT_LINK": "No online.gov.vn link (Ministry of Industry and Trade notification/registration). New framework: verify",
+        "ECOM_NO_TAX_ID": "No tax code / business registration number found on the homepage",
+        "NONE": "No automatic signals. The checklists still need a manual review.",
+        "homepage": "homepage",
+        "no_action": "(no action)",
+    },
+}
 
-def signals(phases, inv):
+REPORT_TEXT = {
+    "vi": {
+        "title": "Quét động", "time": "Thời điểm", "platform": "Nền tảng",
+        "note": "> Dấu hiệu kèm bằng chứng, không phải kết luận pháp lý. Kết quả phụ thuộc vị trí máy quét.",
+        "sessions": "Ba phiên đồng ý (desktop 1366)",
+        "cols": "| Phiên | Banner | Nút đã bấm | Cookie theo dõi | Request theo dõi (vendor: số, gcs) | Lỗi |",
+        "not_found": "không thấy", "no": "không",
+        "signals": "Gợi ý cần xem (map sang checklist trong references/law/)",
+        "inventory": "Kiểm kê trang chủ", "bct": "Link Bộ Công Thương", "biz": "Thông tin DN",
+        "ecom": "Dấu hiệu bán hàng", "privacy": "Chính sách bảo mật", "forms": "Form",
+        "form_line": "- action=`{action}` cá nhân={personal} nhắc chính sách={policy} checkbox={boxes} fields={fields}",
+        "mobile": "Banner trên mobile 390", "shots": "Ảnh chụp", "hosts": "Máy chủ bên thứ ba đã gọi (mọi phiên)",
+        "inventory_error": "Không kiểm kê được trang chủ",
+    },
+    "en": {
+        "title": "Dynamic scan", "time": "Scanned at", "platform": "Platform",
+        "note": "> Signals with evidence, not a legal conclusion. Results depend on the scanner's location.",
+        "sessions": "Three consent sessions (desktop 1366)",
+        "cols": "| Session | Banner | Clicked | Tracking cookies | Tracking requests (vendor: count, gcs) | Error |",
+        "not_found": "not found", "no": "none",
+        "signals": "Signals to review (mapped to checklists in references/law/)",
+        "inventory": "Homepage inventory", "bct": "Ministry of Industry and Trade link", "biz": "Business info",
+        "ecom": "Selling signals", "privacy": "Privacy policy", "forms": "Forms",
+        "form_line": "- action=`{action}` personal={personal} mentions_policy={policy} checkboxes={boxes} fields={fields}",
+        "mobile": "Banner on mobile 390", "shots": "Screenshots", "hosts": "Third-party hosts contacted (all sessions)",
+        "inventory_error": "Homepage inventory failed",
+    },
+}
+LANGS = tuple(MESSAGES)
+
+
+def signals(phases, inv, lang="vi"):
     """Gợi ý (không phải kết luận) kèm mục checklist tương ứng trong references/law/."""
+    M = MESSAGES[lang]
     out = []
-    def add(code, ref, msg):
-        out.append({"code": code, "checklist": ref, "note": msg})
+
+    def add(code, ref, key=None, **kw):
+        out.append({"code": code, "checklist": ref, "note": M[key or code].format(**kw)})
+
     none, dec, acc = phases.get("none"), phases.get("decline"), phases.get("accept")
     banner = none and none.get("banner")
     # Không tự tính là tracking: file nạp thư viện, telemetry nền tảng (Shopify tự áp consent),
@@ -304,67 +396,67 @@ def signals(phases, inv):
     real_track = lambda p: [h for h in p["tracker_requests"] if h["vendor"] not in NON_DECISIVE
                             and h["gcs"] != "G100"]
     if none and none["tracking_cookies"]:
-        add("TRACKING_COOKIE_BEFORE_CHOICE", "01-C", f"Cookie theo dõi có khi chưa chọn gì: {', '.join(none['tracking_cookies'])}")
+        add("TRACKING_COOKIE_BEFORE_CHOICE", "01-C", cookies=", ".join(none["tracking_cookies"]))
     if none and real_track(none):
-        add("TRACKER_REQUEST_BEFORE_CHOICE", "01-C", f"{len(real_track(none))} request theo dõi khi chưa chọn (đã loại ping Consent Mode bị từ chối)")
+        add("TRACKER_REQUEST_BEFORE_CHOICE", "01-C", n=len(real_track(none)))
     if dec and not dec.get("error") and (dec["tracking_cookies"] or real_track(dec)):
-        add("TRACKING_AFTER_DECLINE", "01-C", f"Sau khi bấm Từ chối vẫn có cookie {dec['tracking_cookies']} / {len(real_track(dec))} request theo dõi")
+        add("TRACKING_AFTER_DECLINE", "01-C", cookies=", ".join(dec["tracking_cookies"]), n=len(real_track(dec)))
     any_tracker = any(p and p["tracker_requests"] for p in phases.values())
     if not banner and any_tracker:
-        add("NO_BANNER_BUT_TRACKERS", "01-C", "Có dịch vụ theo dõi nhưng không thấy banner cookie (kiểm tra lại: banner có thể chỉ hiện theo vùng)")
+        add("NO_BANNER_BUT_TRACKERS", "01-C")
     if banner and not banner.get("has_decline"):
-        add("NO_DECLINE_BUTTON", "01-B", "Banner không có nút Từ chối ngang hàng với Chấp nhận")
+        add("NO_DECLINE_BUTTON", "01-B")
     if acc and not acc.get("error") and not acc["tracking_cookies"] and any_tracker:
-        add("ACCEPT_DOES_NOT_ENABLE", "kỹ thuật", "Bấm Chấp nhận nhưng không thấy cookie theo dõi: đo lường có thể đã hỏng")
+        add("ACCEPT_DOES_NOT_ENABLE", "technical")
     embeds = sorted({h["vendor"] for p in (none, dec) if p for h in p["tracker_requests"]
                      if h["vendor"] in ("YouTube embed", "Google Maps embed")})
     if embeds:
-        pages = sorted({p.get("second_page") or "trang chủ" for p in (none, dec) if p and any(
+        pages = sorted({p.get("second_page") or M["homepage"] for p in (none, dec) if p and any(
             h["vendor"] in embeds for h in p["tracker_requests"])})
-        add("EMBED_BEFORE_CONSENT", "01-C", f"{', '.join(embeds)} nạp trước khi đồng ý (trang: {', '.join(pages)}). "
-            "Dùng youtube-nocookie.com hoặc ảnh thay thế bấm-để-tải")
-    forms = [f for f in inv.get("forms", []) if f["collects_personal"]]
-    for f in forms:
+        add("EMBED_BEFORE_CONSENT", "01-C", embeds=", ".join(embeds), pages=", ".join(pages))
+    for f in [f for f in inv.get("forms", []) if f["collects_personal"]]:
+        form = f["action"] or M["no_action"]
         if any(c["prechecked"] for c in f["checkboxes"]):
-            add("PRECHECKED_CONSENT", "01-B", f"Form {f['action'] or '(không action)'} có ô tích sẵn")
+            add("PRECHECKED_CONSENT", "01-B", form=form)
         if not f["mentions_policy"]:
-            add("FORM_NO_NOTICE", "01-B", f"Form {f['action'] or '(không action)'} thu thông tin cá nhân nhưng không nhắc chính sách/mục đích")
+            add("FORM_NO_NOTICE", "01-B", form=form)
     pol = inv.get("policy_links", {})
-    if not pol.get("privacy"):
-        add("NO_PRIVACY_LINK", "01-A", "Không thấy link chính sách bảo mật trên trang chủ")
+    if "error" not in inv and not pol.get("privacy"):
+        add("NO_PRIVACY_LINK", "01-A")
     for pp in inv.get("privacy_pages", []):
         u = pp["url"]
         if pp.get("error"):
-            add("PRIVACY_PAGE_ERROR", "01-A", f"Link chính sách bảo mật {u} không mở được: {pp['error']}")
+            add("PRIVACY_PAGE_ERROR", "01-A", url=u, error=pp["error"])
             continue
         if pp.get("expired_refs"):
-            add("POLICY_CITES_EXPIRED_LAW", "01-A", f"{u} dẫn văn bản đã hết hiệu lực: {', '.join(pp['expired_refs'])}")
-        if not pp.get("error") and not pp.get("mentions_cookie") and any_tracker:
-            add("POLICY_NO_COOKIE_SECTION", "01-C", f"{u} không nhắc cookie dù site có dịch vụ theo dõi")
+            add("POLICY_CITES_EXPIRED_LAW", "01-A", url=u, refs=", ".join(pp["expired_refs"]))
+        if not pp.get("mentions_cookie") and any_tracker:
+            add("POLICY_NO_COOKIE_SECTION", "01-C", url=u)
         flags = pp.get("red_flags") or {}
         if flags.get("continue_means_consent"):
-            add("CONTINUE_MEANS_CONSENT", "01-B", f"{u} coi việc tiếp tục sử dụng là đồng ý: \"{flags['continue_means_consent']}\"")
+            add("CONTINUE_MEANS_CONSENT", "01-B", url=u, quote=flags["continue_means_consent"])
         if flags.get("no_third_party_claim") and any_tracker:
-            add("THIRD_PARTY_CLAIM_MISMATCH", "01-A", f"{u} nói không chia sẻ bên thứ ba nhưng site gửi dữ liệu cho dịch vụ bên ngoài: \"{flags['no_third_party_claim']}\"")
+            add("THIRD_PARTY_CLAIM_MISMATCH", "01-A", url=u, quote=flags["no_third_party_claim"])
     if len(inv.get("privacy_pages", [])) > 1:
-        add("MULTIPLE_PRIVACY_PAGES", "01-A", "Có nhiều trang chính sách bảo mật: " + ", ".join(p["url"] for p in inv["privacy_pages"]) + ". Kiểm tra nội dung có mâu thuẫn không")
+        add("MULTIPLE_PRIVACY_PAGES", "01-A", urls=", ".join(p["url"] for p in inv["privacy_pages"]))
     if inv.get("ecommerce_signals"):
         for k in ("return", "shipping", "complaint", "terms"):
             if not pol.get(k):
-                add(f"ECOM_NO_{k.upper()}_LINK", "02-C", f"Có dấu hiệu bán hàng nhưng không thấy link '{k}' trên trang chủ")
+                add(f"ECOM_NO_{k.upper()}_LINK", "02-C", key="ECOM_NO_LINK", kind=k)
         if not inv.get("bct_link"):
-            add("ECOM_NO_BCT_LINK", "02-B", "Không thấy link online.gov.vn (thông báo/đăng ký Bộ Công Thương). Khung mới: cần tra cứu lại")
+            add("ECOM_NO_BCT_LINK", "02-B")
         if not inv["business_info"]["tax_or_registration"]:
-            add("ECOM_NO_TAX_ID", "02-C", "Không thấy mã số thuế/số đăng ký doanh nghiệp trên trang chủ")
+            add("ECOM_NO_TAX_ID", "02-C")
     return out
 
 
 def md_report(data):
-    L = [f"# Quét động: {data['url']}", "",
-         f"Thời điểm: {data['scanned_at']} · Nền tảng: {', '.join(data['inventory'].get('platform', []))}",
-         "", "> Dấu hiệu kèm bằng chứng, không phải kết luận pháp lý. Kết quả phụ thuộc vị trí máy quét.", "",
-         "## Ba phiên đồng ý (desktop 1366)", "",
-         "| Phiên | Banner | Nút đã bấm | Cookie theo dõi | Request theo dõi (vendor: số, gcs) | Lỗi |", "|---|---|---|---|---|---|"]
+    lang = data.get("lang", "vi")
+    T, M = REPORT_TEXT[lang], MESSAGES[lang]
+    inv = data["inventory"]
+    L = [f"# {T['title']}: {data['url']}", "",
+         f"{T['time']}: {data['scanned_at']} · {T['platform']}: {', '.join(inv.get('platform', []))}",
+         "", T["note"], "", f"## {T['sessions']}", "", T["cols"], "|---|---|---|---|---|---|"]
     for k in ("none", "decline", "accept"):
         p = data["phases"].get(k)
         if not p:
@@ -372,46 +464,54 @@ def md_report(data):
         b = p.get("banner") or {}
         vend = {}
         for h in p["tracker_requests"]:
-            key = h["vendor"]
-            vend.setdefault(key, [0, set()])
-            vend[key][0] += 1
+            vend.setdefault(h["vendor"], [0, set()])
+            vend[h["vendor"]][0] += 1
             if h["gcs"]:
-                vend[key][1].add(h["gcs"])
+                vend[h["vendor"]][1].add(h["gcs"])
         vs = "; ".join(f"{n}: {c}{' gcs=' + ','.join(sorted(g)) if g else ''}" for n, (c, g) in vend.items()) or "0"
-        L.append(f"| {k} | {b.get('cmp', 'không thấy')} | {p.get('clicked') or '-'} | {', '.join(p['tracking_cookies']) or '0'} | {vs} | {p.get('error') or ''} |")
-    L += ["", "## Gợi ý cần xem (map sang checklist trong references/law/)", ""]
-    for s in data["signals"] or [{"code": "-", "checklist": "-", "note": "Không có tín hiệu tự động. Vẫn phải đối chiếu checklist thủ công."}]:
+        L.append(f"| {k} | {b.get('cmp', T['not_found'])} | {p.get('clicked') or '-'} | "
+                 f"{', '.join(p['tracking_cookies']) or '0'} | {vs} | {p.get('error') or ''} |")
+    L += ["", f"## {T['signals']}", ""]
+    for s in data["signals"] or [{"code": "-", "checklist": "-", "note": M["NONE"]}]:
         L.append(f"- `{s['code']}` ({s['checklist']}): {s['note']}")
-    inv = data["inventory"]
-    L += ["", "## Kiểm kê trang chủ", ""]
+    L += ["", f"## {T['inventory']}", ""]
+    if inv.get("error"):
+        L.append(f"- {T['inventory_error']}: {inv['error']}")
     for k, v in inv.get("policy_links", {}).items():
-        L.append(f"- Link {k}: {', '.join(x['h'] for x in v) or 'không thấy'}")
-    L.append(f"- Link Bộ Công Thương: {', '.join(inv.get('bct_link') or []) or 'không thấy'}")
-    L.append(f"- Thông tin DN: {json.dumps(inv.get('business_info'), ensure_ascii=False)}")
-    L.append(f"- Dấu hiệu bán hàng: {', '.join(inv.get('ecommerce_signals') or []) or 'không'}")
-    for pp in inv.get("privacy_pages") or [{"url": "không thấy"}]:
-        L.append(f"- Chính sách bảo mật: {json.dumps(pp, ensure_ascii=False)}")
-    L += ["", "## Form", ""]
+        L.append(f"- Link {k}: {', '.join(x['h'] for x in v) or T['not_found']}")
+    L.append(f"- {T['bct']}: {', '.join(inv.get('bct_link') or []) or T['not_found']}")
+    L.append(f"- {T['biz']}: {json.dumps(inv.get('business_info'), ensure_ascii=False)}")
+    L.append(f"- {T['ecom']}: {', '.join(inv.get('ecommerce_signals') or []) or T['no']}")
+    for pp in inv.get("privacy_pages") or [{"url": T["not_found"]}]:
+        L.append(f"- {T['privacy']}: {json.dumps(pp, ensure_ascii=False)}")
+    L += ["", f"## {T['forms']}", ""]
     for f in inv.get("forms", []):
-        L.append(f"- action=`{f['action']}` cá nhân={f['collects_personal']} nhắc chính sách={f['mentions_policy']} checkbox={f['checkboxes']} fields={f['fields']}")
+        L.append(T["form_line"].format(action=f["action"], personal=f["collects_personal"], policy=f["mentions_policy"],
+                                       boxes=f["checkboxes"], fields=f["fields"]))
     mob = data["phases"].get("mobile_none")
     if mob and mob.get("banner"):
-        L += ["", "## Banner trên mobile 390", "", f"- {json.dumps(mob['banner'], ensure_ascii=False)}"]
-    L += ["", "## Ảnh chụp", ""] + [f"- {s}" for s in data["screenshots"]]
+        L += ["", f"## {T['mobile']}", "", f"- {json.dumps(mob['banner'], ensure_ascii=False)}"]
+    L += ["", f"## {T['shots']}", ""] + [f"- {s}" for s in data["screenshots"]]
     hosts = sorted(set(h for p in data["phases"].values() if p for h in p.get("third_party_hosts", [])))
-    L += ["", "## Máy chủ bên thứ ba đã gọi (mọi phiên)", "", ", ".join(hosts)]
+    L += ["", f"## {T['hosts']}", "", ", ".join(hosts)]
     return "\n".join(L) + "\n"
 
 
-def scan_site(url, out_dir="vn-legal-audit", with_mobile=True):
+def scan_site(url, out_dir="vn-legal-audit", with_mobile=True, lang="vi"):
+    if lang not in LANGS:
+        raise ValueError(f"lang must be one of {LANGS}")
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     desk = {"width": 1366, "height": 900}
     mob = {"width": 390, "height": 844}
-    data = {"url": url, "scanned_at": datetime.now(VN_TZ).isoformat(timespec="seconds"), "phases": {}, "screenshots": []}
+    data = {"url": url, "lang": lang, "scanned_at": datetime.now(VN_TZ).isoformat(timespec="seconds"),
+            "phases": {}, "screenshots": []}
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
-        data["inventory"] = inventory(browser, url)
+        try:
+            data["inventory"] = inventory(browser, url)
+        except Exception as e:  # vẫn chạy các phiên đồng ý dù trang chủ kiểm kê lỗi
+            data["inventory"] = {"error": f"{type(e).__name__}: {e}"}
         for action in ("none", "decline", "accept"):
             shot = "desktop-first-visit.png" if action == "none" else None
             data["phases"][action] = run_phase(browser, url, action, desk, out, shot)
@@ -421,7 +521,8 @@ def scan_site(url, out_dir="vn-legal-audit", with_mobile=True):
             data["phases"]["mobile_none"] = run_phase(browser, url, "none", mob, out, "mobile-first-visit.png")
             data["screenshots"].append(str(out / "mobile-first-visit.png"))
         browser.close()
-    data["signals"] = signals({k: v for k, v in data["phases"].items() if k in ("none", "decline", "accept")}, data["inventory"])
+    data["signals"] = signals({k: v for k, v in data["phases"].items() if k in ("none", "decline", "accept")},
+                              data["inventory"], lang)
     (out / "scan.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     (out / "scan.md").write_text(md_report(data), encoding="utf-8")
     return data
@@ -433,12 +534,13 @@ def main():
     ap.add_argument("url")
     ap.add_argument("--out", default="vn-legal-audit")
     ap.add_argument("--no-mobile", action="store_true")
+    ap.add_argument("--lang", choices=LANGS, default="vi", help="ngôn ngữ báo cáo / report language (vi, en)")
     a = ap.parse_args()
     if not re.match(r"^https?://", a.url):
-        sys.exit("URL phải bắt đầu bằng http:// hoặc https://")
+        sys.exit("URL must start with http:// or https:// (URL phải bắt đầu bằng http:// hoặc https://)")
     out = Path(a.out)
-    data = scan_site(a.url, out_dir=a.out, with_mobile=not a.no_mobile)
-    print(f"Đã ghi {out / 'scan.md'} và {out / 'scan.json'}")
+    data = scan_site(a.url, out_dir=a.out, with_mobile=not a.no_mobile, lang=a.lang)
+    print(f"{out / 'scan.md'} · {out / 'scan.json'}")
     for s in data["signals"]:
         print(f"  [{s['checklist']}] {s['code']}: {s['note']}")
 

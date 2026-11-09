@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Báo lỗi bảo mật / Report a vulnerability
+    url: https://github.com/gonostudy305/vn-law-guard/security/advisories/new
+    about: Không mở issue công khai cho lỗi bảo mật. / Do not open public issues for security problems.

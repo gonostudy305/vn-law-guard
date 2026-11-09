@@ -1,0 +1,15 @@
+[project]
+name = "vn-law-guard"
+version = "0.2.0"
+description = "Technical evidence scanner and remediation kit for Vietnamese website legal compliance"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = ["playwright>=1.40"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
