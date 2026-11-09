@@ -18,5 +18,7 @@
   white-space: nowrap;
 }
 
+pre { max-width: 100%; overflow-x: auto; }
 pre code { white-space: pre; }
+article, .grid, [role="tabpanel"] { min-width: 0; }
 [hidden] { display: none !important; }
